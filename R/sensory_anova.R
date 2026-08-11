@@ -1,0 +1,200 @@
+#' Perform ANOVA for a sensory attribute
+#'
+#' Fits a fixed-effects ANOVA model for one sensory attribute using
+#' product and assessor effects.
+#'
+#' @param data A data frame or tibble containing sensory data.
+#' @param attribute Character. Name of the sensory attribute column.
+#' @param product Character. Name of the product/sample column.
+#' @param assessor Character. Name of the assessor column.
+#'
+#' @return An object of class `sensory_anova` containing the fitted model,
+#' ANOVA table, product p-value, and model metadata.
+#'
+#' @details
+#' The default model is:
+#'
+#' `attribute ~ product + assessor`
+#'
+#' This is intended as a transparent starting model for balanced
+#' descriptive sensory panel data. More complex models involving session,
+#' replicate, interaction, or random assessor effects should be fitted
+#' separately.
+#'
+#' @examples
+#' \dontrun{
+#' result <- sensory_anova(
+#'   data,
+#'   attribute = "sweetness",
+#'   product = "product",
+#'   assessor = "assessor"
+#' )
+#' }
+#'
+#' @export
+sensory_anova <- function(
+    data,
+    attribute,
+    product = "product",
+    assessor = "assessor"
+) {
+
+  if (!is.data.frame(data)) {
+    stop(
+      "`data` must be a data frame or tibble.",
+      call. = FALSE
+    )
+  }
+
+  if (missing(attribute) ||
+      !is.character(attribute) ||
+      length(attribute) != 1) {
+    stop(
+      "`attribute` must be the name of one sensory attribute.",
+      call. = FALSE
+    )
+  }
+
+  required_cols <- c(
+    attribute,
+    product,
+    assessor
+  )
+
+  missing_cols <- setdiff(
+    required_cols,
+    names(data)
+  )
+
+  if (length(missing_cols) > 0) {
+    stop(
+      "Missing required column(s): ",
+      paste(missing_cols, collapse = ", "),
+      call. = FALSE
+    )
+  }
+
+  if (!is.numeric(data[[attribute]])) {
+    stop(
+      "Sensory attribute must be numeric: ",
+      attribute,
+      call. = FALSE
+    )
+  }
+
+  analysis_data <- data[
+    !is.na(data[[attribute]]) &
+      !is.na(data[[product]]) &
+      !is.na(data[[assessor]]),
+    ,
+    drop = FALSE
+  ]
+
+  if (nrow(analysis_data) == 0) {
+    stop(
+      "No complete observations available for ANOVA.",
+      call. = FALSE
+    )
+  }
+
+  if (length(unique(analysis_data[[product]])) < 2) {
+    stop(
+      "At least two products are required for ANOVA.",
+      call. = FALSE
+    )
+  }
+
+  if (length(unique(analysis_data[[assessor]])) < 2) {
+    stop(
+      "At least two assessors are required for this ANOVA model.",
+      call. = FALSE
+    )
+  }
+
+  analysis_data[[product]] <- factor(
+    analysis_data[[product]]
+  )
+
+  analysis_data[[assessor]] <- factor(
+    analysis_data[[assessor]]
+  )
+
+  model_formula <- stats::reformulate(
+    termlabels = c(product, assessor),
+    response = attribute
+  )
+
+  model <- stats::aov(
+    formula = model_formula,
+    data = analysis_data
+  )
+
+  anova_table <- stats::anova(model)
+
+  anova_df <- data.frame(
+    term = rownames(anova_table),
+    df = anova_table[["Df"]],
+    sum_sq = anova_table[["Sum Sq"]],
+    mean_sq = anova_table[["Mean Sq"]],
+    f_value = anova_table[["F value"]],
+    p_value = anova_table[["Pr(>F)"]],
+    row.names = NULL,
+    check.names = FALSE
+  )
+
+  product_row <- anova_df[
+    anova_df$term == product,
+    ,
+    drop = FALSE
+  ]
+
+  product_p <- if (nrow(product_row) == 1) {
+    product_row$p_value
+  } else {
+    NA_real_
+  }
+
+  result <- list(
+    attribute = attribute,
+    product = product,
+    assessor = assessor,
+    formula = model_formula,
+    model = model,
+    anova_table = tibble::as_tibble(anova_df),
+    product_p_value = product_p,
+    n_observations = nrow(analysis_data),
+    n_products = length(
+      unique(analysis_data[[product]])
+    ),
+    n_assessors = length(
+      unique(analysis_data[[assessor]])
+    )
+  )
+
+  class(result) <- "sensory_anova"
+
+  cli::cli_alert_success(
+    "Sensory ANOVA completed."
+  )
+
+  cli::cli_inform(
+    "Attribute: {attribute}"
+  )
+
+  cli::cli_inform(
+    "Products: {result$n_products}"
+  )
+
+  cli::cli_inform(
+    "Assessors: {result$n_assessors}"
+  )
+
+  if (!is.na(product_p)) {
+
+    cli::cli_inform(
+      "Product p-value: {format.pval(product_p, digits = 4)}"
+    )
+  }
+
+  result
+}

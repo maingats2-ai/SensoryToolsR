@@ -1,0 +1,30 @@
+Package: SensoryToolsR
+Type: Package
+Title: Tools for Food Sensory Science
+Version: 0.1.0
+Authors@R:
+    person(
+        given = "Nga",
+        family = "Mai",
+        role = c("aut", "cre"),
+        email = "maingats2@gmail.com"
+    )
+Description: Tools for importing, validating, analysing, and visualising
+    food sensory evaluation data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    cli,
+    dplyr,
+    ggplot2,
+    janitor,
+    readr,
+    readxl,
+    rlang,
+    tibble,
+    tidyr
+Config/roxygen2/version: 8.1.0
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
