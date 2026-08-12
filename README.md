@@ -94,25 +94,45 @@ sensory_pca_plot()
 sensory_qda()
 ```
 
-## Expected data structure
+## Example dataset
 
-SensoryToolsR is designed primarily for sensory datasets in long experimental form, where each row represents an assessor–product–session observation.
+SensoryToolsR includes a simulated replicated QDA dataset named `qda_example`.
 
-For example:
+The dataset contains:
 
-| assessor | session | product | sweetness | bitterness | umami | firmness |
-| :------- | :------ | :------ | --------: | ---------: | ----: | -------: |
-| A01      | S1      | P1      |       7.2 |        2.0 |   7.0 |      7.2 |
-| A01      | S1      | P2      |       6.8 |        2.5 |   6.5 |      3.6 |
-| A01      | S1      | P3      |       5.0 |        4.0 |   5.2 |      7.0 |
-| A02      | S1      | P1      |       7.4 |        2.1 |   7.2 |      7.3 |
+* 6 products;
+* 6 assessors;
+* 3 sessions;
+* 108 assessor-product-session observations;
+* 8 sensory attributes.
 
-The principal design columns are:
+Load it with:
 
-* `assessor` — assessor or panelist identifier;
-* `product` — product or sample identifier;
-* `session` — evaluation session or replicate;
-* sensory attribute columns — numeric intensity scores such as `sweetness`, `bitterness`, `umami`, `fishy_odor`, `fresh_odor`, `aftertaste`, `firmness`, and `juiciness`.
+```r
+library(SensoryToolsR)
+
+data(qda_example)
+
+dim(qda_example)
+head(qda_example)
+```
+
+The sensory attributes are:
+
+```r
+attributes <- c(
+  "sweetness",
+  "bitterness",
+  "umami",
+  "fishy_odor",
+  "fresh_odor",
+  "aftertaste",
+  "firmness",
+  "juiciness"
+)
+```
+
+The dataset is simulated for demonstration, teaching, package examples, and testing. It does not represent measurements from human participants or a specific commercial product.
 
 ## Importing sensory data
 
@@ -270,29 +290,37 @@ This provides an overview of panel behaviour across the sensory profile rather t
 
 ## Principal component analysis
 
-PCA can be performed on product sensory profiles using:
+PCA can be performed directly on the included `qda_example` dataset.
 
 ```r
+library(SensoryToolsR)
+
+data(qda_example)
+
+attributes <- c(
+  "sweetness",
+  "bitterness",
+  "umami",
+  "fishy_odor",
+  "fresh_odor",
+  "aftertaste",
+  "firmness",
+  "juiciness"
+)
+
 pca_result <- sensory_pca(
-  clean_data,
-  attributes = c(
-    "sweetness",
-    "bitterness",
-    "umami",
-    "fishy_odor",
-    "fresh_odor",
-    "aftertaste",
-    "firmness",
-    "juiciness"
-  )
+  qda_example,
+  attributes = attributes
 )
 ```
 
-The proportion of variance explained by each component can be inspected with:
+Inspect the explained variance:
 
 ```r
 pca_result$variance_table
 ```
+
+For the packaged `qda_example` dataset, the first two principal components represent the dominant sensory structure.
 
 A PCA biplot can be generated with:
 
@@ -302,6 +330,22 @@ sensory_pca_plot(
   type = "biplot"
 )
 ```
+
+PCA diagnostics can then be examined with:
+
+```r
+pca_diagnostics <- sensory_pca_diagnostics(
+  pca_result,
+  components = c(1, 2),
+  top_n = 5
+)
+
+pca_diagnostics$top_attributes
+pca_diagnostics$top_products
+```
+
+In this simulated dataset, PC1 primarily represents a taste/odor freshness–deterioration contrast, while PC2 primarily represents the firmness–juiciness texture contrast.
+
 
 ## PCA diagnostics
 
@@ -329,18 +373,24 @@ These outputs help identify which sensory attributes and products contribute mos
 The main analytical components can be combined using `sensory_qda()`.
 
 ```r
+library(SensoryToolsR)
+
+data(qda_example)
+
+attributes <- c(
+  "sweetness",
+  "bitterness",
+  "umami",
+  "fishy_odor",
+  "fresh_odor",
+  "aftertaste",
+  "firmness",
+  "juiciness"
+)
+
 qda_result <- sensory_qda(
-  clean_data,
-  attributes = c(
-    "sweetness",
-    "bitterness",
-    "umami",
-    "fishy_odor",
-    "fresh_odor",
-    "aftertaste",
-    "firmness",
-    "juiciness"
-  )
+  qda_example,
+  attributes = attributes
 )
 ```
 
@@ -350,7 +400,7 @@ Printing the result provides a concise overview:
 qda_result
 ```
 
-A more detailed summary can be obtained with:
+A structured summary can be obtained with:
 
 ```r
 qda_summary <- summary(
@@ -358,7 +408,7 @@ qda_summary <- summary(
 )
 ```
 
-The integrated QDA object contains components including:
+Useful result components include:
 
 ```r
 qda_result$overview
@@ -369,7 +419,7 @@ qda_result$pca
 qda_result$pca_diagnostics
 ```
 
-This structure allows users to move from an overall QDA interpretation to individual statistical results when more detail is required.
+This allows users to move from an overall QDA summary to detailed statistical outputs.
 
 ## Example interpretation
 
