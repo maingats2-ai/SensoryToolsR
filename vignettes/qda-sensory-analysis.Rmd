@@ -1,0 +1,649 @@
+---
+
+title: "QDA Sensory Analysis with SensoryToolsR"
+author: "Mai Nga"
+date: "`r Sys.Date()`"
+output:
+rmarkdown::html_vignette:
+toc: true
+number_sections: true
+vignette: >
+%\VignetteIndexEntry{QDA Sensory Analysis with SensoryToolsR}
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteEncoding{UTF-8}
+-------------------------
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  message = FALSE,
+  warning = FALSE
+)
+
+library(SensoryToolsR)
+```
+
+# Introduction
+
+Quantitative Descriptive Analysis (QDA) is widely used to characterize and compare products using a trained sensory panel.
+
+A typical replicated QDA experiment may include:
+
+* several products;
+* multiple trained assessors;
+* repeated sessions or replicates;
+* several sensory attributes measured on numerical intensity scales.
+
+Analysis of such data commonly involves several complementary questions:
+
+1. Is the experimental structure complete?
+2. Do products differ in sensory intensity?
+3. Do assessors discriminate among products?
+4. Are assessors repeatable across sessions?
+5. Is there evidence of Product × Assessor interaction?
+6. Which sensory attributes contribute most strongly to product differentiation?
+7. Can the multidimensional sensory structure be summarized using principal component analysis (PCA)?
+
+SensoryToolsR provides functions that support these stages within a reproducible R workflow.
+
+This vignette demonstrates the workflow using the included `qda_example` dataset.
+
+# Example dataset
+
+The package includes a simulated replicated QDA dataset:
+
+```{r load-data}
+data(qda_example)
+
+dim(qda_example)
+```
+
+The dataset contains 108 observations:
+
+* 6 products;
+* 6 assessors;
+* 3 sessions;
+* 8 sensory attributes.
+
+The first observations can be inspected using:
+
+```{r inspect-data}
+head(qda_example)
+```
+
+The experimental design variables are:
+
+* `product`;
+* `assessor`;
+* `session`.
+
+The sensory attributes are:
+
+```{r attributes}
+sensory_attributes <- c(
+  "sweetness",
+  "bitterness",
+  "umami",
+  "fishy_odor",
+  "fresh_odor",
+  "aftertaste",
+  "firmness",
+  "juiciness"
+)
+
+sensory_attributes
+```
+
+The dataset is simulated specifically for demonstration, teaching, examples, and package testing. It does not represent measurements obtained from human participants or a particular commercial product.
+
+# Validate the sensory dataset
+
+Before performing statistical analysis, the experimental structure should be checked.
+
+SensoryToolsR provides `sensory_validate()` for this purpose.
+
+```{r validation}
+validation <- sensory_validate(
+  qda_example
+)
+```
+
+The validation procedure examines:
+
+* number of rows and columns;
+* number of assessors;
+* number of products;
+* number of sessions;
+* sensory attributes;
+* missing values;
+* duplicate experimental records;
+* expected assessor-product-session combinations;
+* panel completeness.
+
+For the example dataset, the expected number of design records is:
+
+[
+6\ \text{assessors}
+\times
+6\ \text{products}
+\times
+3\ \text{sessions}
+==================
+
+108
+]
+
+The dataset therefore represents a complete balanced assessor-product-session design.
+
+# Descriptive statistics
+
+Descriptive statistics provide an initial overview of the sensory profiles of the products.
+
+Use `sensory_summary()` to calculate product-level summaries:
+
+```{r sensory-summary}
+sensory_summary_result <- sensory_summary(
+  qda_example,
+  attributes = sensory_attributes
+)
+
+sensory_summary_result
+```
+
+The output contains product-by-attribute descriptive information such as:
+
+* number of observations;
+* mean;
+* standard deviation;
+* standard error;
+* median;
+* coefficient of variation;
+* confidence intervals;
+* minimum;
+* maximum.
+
+These summaries are useful for understanding the magnitude and variability of sensory scores before performing inferential analyses.
+
+# Analysis of one sensory attribute
+
+A single sensory attribute can be analysed using `sensory_anova()`.
+
+For example:
+
+```{r single-anova}
+sweetness_anova <- sensory_anova(
+  qda_example,
+  attribute = "sweetness"
+)
+
+sweetness_anova$anova_table
+```
+
+This analysis evaluates product differences while accounting for assessor effects.
+
+The product p-value can be accessed directly:
+
+```{r product-p-value}
+sweetness_anova$product_p_value
+```
+
+A small product p-value provides evidence that the products differ in perceived sweetness.
+
+# Post-hoc product comparisons
+
+When the product effect is significant, pairwise product comparisons can be investigated using `sensory_posthoc()`.
+
+```{r posthoc}
+sweetness_posthoc <- sensory_posthoc(
+  sweetness_anova
+)
+
+sweetness_posthoc$comparisons
+```
+
+SensoryToolsR currently uses Tukey HSD for these multiple comparisons.
+
+Post-hoc analysis should normally be interpreted after considering the corresponding ANOVA result.
+
+# Replicated panel ANOVA
+
+Replicated sensory studies contain additional information about assessor and session performance.
+
+Use `sensory_panel_anova()`:
+
+```{r panel-anova}
+sweetness_panel <- sensory_panel_anova(
+  qda_example,
+  attribute = "sweetness"
+)
+
+sweetness_panel$anova_table
+```
+
+The panel ANOVA evaluates:
+
+* Product;
+* Assessor;
+* Session;
+* Product × Assessor interaction.
+
+## Product effect
+
+A significant product effect indicates that the panel differentiates among products for the sensory attribute.
+
+## Assessor effect
+
+An assessor effect indicates differences in overall scale use among assessors.
+
+Such an effect does not necessarily imply poor panel performance. Assessors may use different parts of the scale while still ranking products consistently.
+
+## Session effect
+
+A session effect can indicate systematic differences among repeated evaluation sessions.
+
+## Product × Assessor interaction
+
+The Product × Assessor interaction is particularly important in trained-panel evaluation.
+
+A significant interaction may indicate that assessors do not perceive or rank product differences consistently.
+
+The interaction therefore provides information about panel agreement in product discrimination.
+
+# Individual assessor performance
+
+SensoryToolsR can evaluate assessor-level performance using `sensory_panel_performance()`.
+
+```{r assessor-performance}
+sweetness_performance <- sensory_panel_performance(
+  qda_example,
+  attribute = "sweetness"
+)
+
+sweetness_performance$assessor_summary
+```
+
+The performance analysis considers multiple aspects of assessor behaviour rather than relying on a single statistic.
+
+Depending on the dataset and selected thresholds, assessors may be identified for additional review.
+
+A review flag should not automatically be interpreted as a reason to remove an assessor. Instead, it indicates that the assessor's data deserve closer inspection.
+
+Possible considerations include:
+
+* discrimination;
+* repeatability;
+* agreement with the panel;
+* unusual scale use;
+* inconsistent responses across sessions.
+
+# Multi-attribute panel analysis
+
+QDA studies normally contain several sensory attributes.
+
+Instead of analysing every attribute manually, `sensory_panel_multi()` applies the panel analysis across multiple variables:
+
+```{r panel-multi}
+panel_multi <- sensory_panel_multi(
+  qda_example,
+  attributes = sensory_attributes
+)
+
+panel_multi$attribute_summary
+```
+
+This provides an attribute-level overview of:
+
+* product significance;
+* assessor effects;
+* session effects;
+* Product × Assessor interactions;
+* assessor-performance screening.
+
+The multi-attribute result is particularly useful for identifying which sensory attributes show strong product discrimination and which may require additional panel review.
+
+# Visualizing panel performance
+
+Panel-performance results can also be visualized.
+
+For example:
+
+```{r panel-plot, fig.alt="Sensory panel performance plot for sweetness"}
+sensory_panel_plot(
+  sweetness_performance
+)
+```
+
+The graphical output complements the numerical panel-performance summaries and can help identify assessor patterns requiring further investigation.
+
+# Principal component analysis
+
+QDA data are multivariate because several sensory attributes jointly describe each product.
+
+Principal component analysis provides a lower-dimensional representation of these sensory profiles.
+
+Use:
+
+```{r pca}
+pca_result <- sensory_pca(
+  qda_example,
+  attributes = sensory_attributes,
+  scale = FALSE
+)
+
+pca_result$variance_table
+```
+
+For `qda_example`, the first two principal components capture almost all of the systematic product-profile variation.
+
+The simulated data were deliberately designed to contain two interpretable dimensions.
+
+## PC1: taste and odor differentiation
+
+PC1 is primarily associated with attributes related to freshness and deterioration.
+
+Attributes such as:
+
+* sweetness;
+* fresh odor;
+* umami;
+
+tend to contrast with:
+
+* bitterness;
+* fishy odor;
+* aftertaste.
+
+The signs of PCA loadings may reverse without changing the scientific interpretation. Therefore, interpretation should focus on relative directions and magnitudes rather than on whether a loading is specifically positive or negative.
+
+## PC2: texture differentiation
+
+PC2 is primarily associated with:
+
+* firmness;
+* juiciness.
+
+These two texture attributes occur in opposite directions on the second component.
+
+This gives PC2 an interpretation that is largely independent of the freshness-related dimension represented by PC1.
+
+# PCA biplot
+
+A PCA biplot displays products and sensory attributes in the same two-dimensional representation.
+
+```{r pca-biplot, fig.alt="PCA biplot of the QDA example dataset"}
+sensory_pca_plot(
+  pca_result,
+  type = "biplot"
+)
+```
+
+Products positioned close together have relatively similar sensory profiles.
+
+Sensory attribute vectors indicate the directions associated with increasing values of those attributes.
+
+Attributes pointing in similar directions tend to be positively associated, whereas attributes pointing in approximately opposite directions tend to represent contrasting product characteristics.
+
+# PCA diagnostics
+
+The statistical meaning of the PCA can be examined more systematically using `sensory_pca_diagnostics()`.
+
+```{r pca-diagnostics}
+pca_diagnostics <- sensory_pca_diagnostics(
+  pca_result,
+  components = c(1, 2),
+  top_n = 5
+)
+
+pca_diagnostics$top_attributes
+```
+
+The top attributes table identifies the variables contributing most strongly to each principal component.
+
+Product contributions can also be inspected:
+
+```{r pca-products}
+pca_diagnostics$top_products
+```
+
+Additional attribute-level diagnostics are available through:
+
+```{r pca-attribute-diagnostics}
+pca_diagnostics$attribute_diagnostics
+```
+
+These quantities help distinguish between:
+
+* attributes strongly contributing to a component;
+* attributes well represented by a component;
+* products strongly influencing the PCA solution.
+
+# Standardized versus non-standardized PCA
+
+SensoryToolsR allows PCA either with or without standardization.
+
+The previous analysis used:
+
+```r
+scale = FALSE
+```
+
+A standardized analysis can be performed using:
+
+```{r standardized-pca}
+pca_scaled <- sensory_pca(
+  qda_example,
+  attributes = sensory_attributes,
+  scale = TRUE
+)
+
+pca_scaled$variance_table
+```
+
+Standardization gives each sensory attribute unit variance before PCA.
+
+Whether standardization is appropriate depends on the scientific context.
+
+When sensory attributes are measured on the same intensity scale and have comparable variability, non-standardized PCA may preserve meaningful differences in variance among attributes.
+
+When attributes have substantially different scales or variances, standardized PCA may be more appropriate.
+
+The choice should therefore be made explicitly rather than automatically.
+
+# Integrated QDA analysis
+
+The previous sections demonstrated individual SensoryToolsR functions.
+
+For routine QDA analysis, these steps can be combined using `sensory_qda()`.
+
+```{r integrated-qda}
+qda_result <- sensory_qda(
+  qda_example,
+  attributes = sensory_attributes
+)
+```
+
+Printing the result provides a concise integrated overview:
+
+```{r print-qda}
+qda_result
+```
+
+The result contains several components:
+
+```{r qda-components}
+names(qda_result)
+```
+
+Important components include:
+
+```r
+qda_result$overview
+qda_result$validation
+qda_result$summary
+qda_result$panel
+qda_result$pca
+qda_result$pca_diagnostics
+```
+
+The integrated function does not introduce a separate statistical model.
+
+Instead, it coordinates the validated SensoryToolsR analysis functions into a reproducible QDA workflow.
+
+# Structured QDA summary
+
+A structured summary can be created with:
+
+```{r qda-summary}
+qda_summary <- summary(
+  qda_result
+)
+
+qda_summary$attribute_summary
+```
+
+The assessor-screening overview is available through:
+
+```{r assessor-summary}
+qda_summary$assessor_summary
+```
+
+The PCA summary can be inspected using:
+
+```{r qda-pca-summary}
+qda_summary$pca_variance
+```
+
+and the strongest PCA attribute contributors using:
+
+```{r qda-top-attributes}
+qda_summary$pca_top_attributes
+```
+
+This structured output is useful for downstream reporting because the statistical results remain available as tables rather than being limited to console text.
+
+# A complete reproducible workflow
+
+A compact QDA workflow using SensoryToolsR can therefore be written as:
+
+```{r complete-workflow, eval=FALSE}
+library(SensoryToolsR)
+
+data(qda_example)
+
+attributes <- c(
+  "sweetness",
+  "bitterness",
+  "umami",
+  "fishy_odor",
+  "fresh_odor",
+  "aftertaste",
+  "firmness",
+  "juiciness"
+)
+
+# Validate experimental structure
+sensory_validate(
+  qda_example
+)
+
+# Descriptive statistics
+sensory_summary(
+  qda_example,
+  attributes = attributes
+)
+
+# Integrated QDA analysis
+result <- sensory_qda(
+  qda_example,
+  attributes = attributes
+)
+
+# Concise result
+result
+
+# Structured summary
+result_summary <- summary(
+  result
+)
+
+# PCA visualization
+sensory_pca_plot(
+  result$pca,
+  type = "biplot"
+)
+
+# PCA drivers
+result$pca_diagnostics$top_attributes
+```
+
+# Interpretation principles
+
+Statistical output should always be interpreted together with sensory-science knowledge and the experimental design.
+
+Some useful principles are:
+
+1. **Product significance indicates discrimination, not necessarily practical importance.**
+   Statistical significance should be considered together with the magnitude of sensory differences.
+
+2. **Assessor effects are not automatically problematic.**
+   Assessors may use different portions of an intensity scale while maintaining similar product discrimination.
+
+3. **Product × Assessor interaction deserves careful attention.**
+   Strong interaction may indicate disagreement in product characterization.
+
+4. **Assessor review flags are diagnostic, not automatic exclusion rules.**
+   Decisions about assessor retraining or exclusion require examination of the original study context.
+
+5. **PCA axes should be interpreted from loadings and contributions.**
+   Component signs are arbitrary and may reverse without changing the sensory meaning.
+
+6. **PCA scaling should be a scientific decision.**
+   Standardization should not be applied automatically.
+
+7. **Statistical analysis does not replace good sensory experimental design.**
+   Appropriate panel selection, training, attribute development, replication, sample presentation, and testing conditions remain essential.
+
+# Reproducibility
+
+A reproducible sensory workflow should retain:
+
+* raw sensory data;
+* cleaned data;
+* experimental design information;
+* analysis scripts;
+* package versions;
+* analysis settings;
+* statistical outputs;
+* graphical outputs.
+
+The SensoryToolsR workflow is designed to help make these steps explicit and repeatable.
+
+For formal research, it is also good practice to record the R session information:
+
+```{r session-info}
+sessionInfo()
+```
+
+# Summary
+
+SensoryToolsR provides an integrated framework for analysing replicated QDA sensory data.
+
+The workflow demonstrated in this vignette includes:
+
+1. experimental-structure validation;
+2. descriptive sensory statistics;
+3. single-attribute ANOVA;
+4. post-hoc product comparisons;
+5. replicated panel ANOVA;
+6. assessor-performance assessment;
+7. multi-attribute panel analysis;
+8. panel visualization;
+9. principal component analysis;
+10. PCA diagnostics;
+11. integrated QDA analysis;
+12. structured QDA summaries.
+
+The included `qda_example` dataset allows the complete workflow to be reproduced directly after installing the package.
