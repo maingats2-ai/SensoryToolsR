@@ -28,3 +28,5 @@ Config/roxygen2/version: 8.1.0
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://github.com/maingats2-ai/SensoryToolsR
+BugReports: https://github.com/maingats2-ai/SensoryToolsR/issues
