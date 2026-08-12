@@ -231,12 +231,19 @@ anova_result$anova_table
 When appropriate, product differences can be investigated using Tukey post-hoc comparisons:
 
 ```r
-posthoc_result <- sensory_posthoc(
+anova_result <- sensory_anova(
   clean_data,
   attribute = "sweetness"
 )
+
+posthoc_result <- sensory_posthoc(
+  anova_result
+)
+
+posthoc_result$comparisons
 ```
 
+`sensory_posthoc()` takes an object returned by `sensory_anova()`.
 ## Panel ANOVA
 
 For replicated panel data containing assessors, products, and sessions:
