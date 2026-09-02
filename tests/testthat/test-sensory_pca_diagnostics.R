@@ -851,3 +851,167 @@ test_that("variance table contains selected components", {
     )
   )
 })
+
+test_that("attribute cos2 matches PCA variable geometry", {
+
+  pca_result <-
+    make_pca_diagnostic_result()
+
+  result <- sensory_pca_diagnostics(
+    pca_result,
+    components = c(
+      1,
+      2
+    )
+  )
+
+  profile_matrix <- as.matrix(
+    pca_result$product_profiles[
+      pca_result$attributes
+    ]
+  )
+
+  processed_profile_matrix <-
+    profile_matrix
+
+  if (!identical(
+    pca_result$pca_model$center,
+    FALSE
+  )) {
+
+    processed_profile_matrix <- sweep(
+      processed_profile_matrix,
+      2,
+      pca_result$pca_model$center,
+      FUN = "-"
+    )
+  }
+
+  if (!identical(
+    pca_result$pca_model$scale,
+    FALSE
+  )) {
+
+    processed_profile_matrix <- sweep(
+      processed_profile_matrix,
+      2,
+      pca_result$pca_model$scale,
+      FUN = "/"
+    )
+  }
+
+  attribute_inertia <- colSums(
+    processed_profile_matrix^2
+  ) / (
+    nrow(processed_profile_matrix) - 1
+  )
+
+  variable_coordinates <- sweep(
+    pca_result$pca_model$rotation,
+    2,
+    pca_result$pca_model$sdev,
+    FUN = "*"
+  )
+
+  expected_cos2 <- sweep(
+    variable_coordinates^2,
+    1,
+    attribute_inertia,
+    FUN = "/"
+  )
+
+  actual_pc1 <-
+    result$attribute_diagnostics$cos2[
+      result$attribute_diagnostics$
+        component == "PC1"
+    ]
+
+  actual_pc2 <-
+    result$attribute_diagnostics$cos2[
+      result$attribute_diagnostics$
+        component == "PC2"
+    ]
+
+  expect_equal(
+    actual_pc1,
+    unname(
+      expected_cos2[, "PC1"]
+    ),
+    tolerance = 1e-10
+  )
+
+  expect_equal(
+    actual_pc2,
+    unname(
+      expected_cos2[, "PC2"]
+    ),
+    tolerance = 1e-10
+  )
+})
+
+
+test_that("attribute cos2 is correct for standardized PCA", {
+
+  test_data <-
+    make_pca_diagnostic_data()
+
+  pca_result <- sensory_pca(
+    test_data,
+    attributes =
+      pca_diagnostic_attributes,
+    scale = TRUE
+  )
+
+  result <- sensory_pca_diagnostics(
+    pca_result,
+    components = c(
+      1,
+      2
+    )
+  )
+
+  variable_coordinates <- sweep(
+    pca_result$pca_model$rotation,
+    2,
+    pca_result$pca_model$sdev,
+    FUN = "*"
+  )
+
+  expected_cos2 <-
+    variable_coordinates^2
+
+  actual_pc1 <-
+    result$attribute_diagnostics$cos2[
+      result$attribute_diagnostics$
+        component == "PC1"
+    ]
+
+  actual_pc2 <-
+    result$attribute_diagnostics$cos2[
+      result$attribute_diagnostics$
+        component == "PC2"
+    ]
+
+  expect_equal(
+    actual_pc1,
+    unname(
+      expected_cos2[, "PC1"]
+    ),
+    tolerance = 1e-10
+  )
+
+  expect_equal(
+    actual_pc2,
+    unname(
+      expected_cos2[, "PC2"]
+    ),
+    tolerance = 1e-10
+  )
+
+  expect_true(
+    all(
+      result$attribute_diagnostics$cos2 >= 0 &
+        result$attribute_diagnostics$cos2 <= 1
+    )
+  )
+})

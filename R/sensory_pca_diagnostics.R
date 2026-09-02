@@ -144,10 +144,53 @@ sensory_pca_diagnostics <- function(
   rownames(loading_matrix) <-
     x$loadings$attribute
 
-  loading_sq <- loading_matrix^2
+  # --------------------------------------------------
+  # Attribute inertia in the PCA analysis space
+  # --------------------------------------------------
 
-  attribute_total_sq <- rowSums(
-    loading_sq
+  profile_matrix <- as.matrix(
+    x$product_profiles[
+      x$attributes
+    ]
+  )
+
+  # Reproduce the preprocessing used by prcomp()
+  processed_profile_matrix <- profile_matrix
+
+  if (!identical(x$pca_model$center, FALSE)) {
+
+    processed_profile_matrix <- sweep(
+      processed_profile_matrix,
+      2,
+      x$pca_model$center,
+      FUN = "-"
+    )
+  }
+
+  if (!identical(x$pca_model$scale, FALSE)) {
+
+    processed_profile_matrix <- sweep(
+      processed_profile_matrix,
+      2,
+      x$pca_model$scale,
+      FUN = "/"
+    )
+  }
+
+  n_profile_rows <- nrow(
+    processed_profile_matrix
+  )
+
+  attribute_inertia <- colSums(
+    processed_profile_matrix^2
+  ) / (n_profile_rows - 1)
+
+  # Variable coordinates in PCA space
+  variable_coordinates <- sweep(
+    loading_matrix,
+    2,
+    x$pca_model$sdev,
+    FUN = "*"
   )
 
   attribute_diag_list <- lapply(
@@ -173,8 +216,17 @@ sensory_pca_diagnostics <- function(
         sum(loading_sq_pc) *
         100
 
-      cos2 <- loading_sq_pc /
-        attribute_total_sq
+      coordinates_pc <- variable_coordinates[
+        ,
+        pc_name
+      ]
+
+      cos2 <- ifelse(
+        attribute_inertia > 0,
+        coordinates_pc^2 /
+          attribute_inertia,
+        NA_real_
+      )
 
       tibble::tibble(
         attribute = rownames(
