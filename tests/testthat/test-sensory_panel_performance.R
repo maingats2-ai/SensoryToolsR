@@ -493,3 +493,84 @@ test_that("sensory_panel_performance reports assessor session effects", {
     tolerance = 1e-12
   )
 })
+
+test_that("sensory_panel_performance reports assessor mean level bias", {
+
+  test_data <-
+    make_panel_performance_data()
+
+  test_data$sweetness[
+    test_data$assessor == "A01"
+  ] <-
+    test_data$sweetness[
+      test_data$assessor == "A01"
+    ] + 2
+
+  result <- sensory_panel_performance(
+    test_data,
+    attribute = "sweetness"
+  )
+
+  a01_data <- test_data[
+    test_data$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  other_data <- test_data[
+    test_data$assessor != "A01",
+    ,
+    drop = FALSE
+  ]
+
+  a01_product_means <- stats::aggregate(
+    sweetness ~ product,
+    data = a01_data,
+    FUN = mean
+  )
+
+  other_product_means <- stats::aggregate(
+    sweetness ~ product,
+    data = other_data,
+    FUN = mean
+  )
+
+  names(a01_product_means)[2] <-
+    "assessor_mean"
+
+  names(other_product_means)[2] <-
+    "other_panel_mean"
+
+  comparison <- merge(
+    a01_product_means,
+    other_product_means,
+    by = "product"
+  )
+
+  expected_bias <- mean(
+    comparison$assessor_mean -
+      comparison$other_panel_mean
+  )
+
+  a01_result <- result$assessor_table[
+    result$assessor_table$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  expect_true(
+    "mean_level_bias" %in%
+      names(result$assessor_table)
+  )
+
+  expect_equal(
+    a01_result$mean_level_bias,
+    expected_bias,
+    tolerance = 1e-12
+  )
+
+  expect_gt(
+    a01_result$mean_level_bias,
+    1.5
+  )
+})

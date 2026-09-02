@@ -443,6 +443,20 @@ sensory_panel_performance <- function(
         by = "product"
       )
 
+      # -----------------------------------------------
+      # Mean level bias relative to the remaining panel
+      # -----------------------------------------------
+
+      mean_level_bias <- NA_real_
+
+      if (nrow(agreement_data) > 0) {
+
+        mean_level_bias <- mean(
+          agreement_data$assessor_product_mean -
+            agreement_data$other_panel_mean
+        )
+      }
+
       agreement_correlation <- NA_real_
 
       if (
@@ -483,6 +497,7 @@ sensory_panel_performance <- function(
         session_p = session_p,
         repeatability_rmse = repeatability_rmse,
         residual_mse = residual_mse,
+        mean_level_bias = mean_level_bias,
         agreement_correlation = agreement_correlation,
         stringsAsFactors = FALSE
       )
