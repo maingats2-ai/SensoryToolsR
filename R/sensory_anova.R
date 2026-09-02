@@ -111,6 +111,28 @@ sensory_anova <- function(
     )
   }
 
+  # --------------------------------------------------
+  # Detect replicated assessor-product observations
+  # --------------------------------------------------
+
+  assessor_product_counts <- table(
+    analysis_data[[assessor]],
+    analysis_data[[product]]
+  )
+
+  if (any(assessor_product_counts > 1L)) {
+    warning(
+      paste0(
+        "Replicated Assessor x Product observations were detected. ",
+        "`sensory_anova()` fits a simple additive Product + Assessor model. ",
+        "For replicated trained-panel or QDA data, use ",
+        "`sensory_panel_anova()` so session and Product x Assessor ",
+        "variation are modelled explicitly."
+      ),
+      call. = FALSE
+    )
+  }
+
   analysis_data[[product]] <- factor(
     analysis_data[[product]]
   )

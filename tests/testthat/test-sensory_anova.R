@@ -218,3 +218,37 @@ test_that("sensory_anova requires at least two assessors", {
     "At least two assessors"
   )
 })
+
+test_that("sensory_anova warns when assessor-product combinations are replicated", {
+
+  test_data <- data.frame(
+    assessor = rep(
+      c("A01", "A02", "A03"),
+      each = 4
+    ),
+
+    product = rep(
+      c("P1", "P2"),
+      times = 6
+    ),
+
+    sweetness = c(
+      7.0, 5.0,
+      7.2, 5.1,
+
+      7.5, 5.3,
+      7.3, 5.4,
+
+      6.8, 4.7,
+      7.0, 4.9
+    )
+  )
+
+  expect_warning(
+    sensory_anova(
+      test_data,
+      attribute = "sweetness"
+    ),
+    "Replicated Assessor x Product observations"
+  )
+})
