@@ -9,8 +9,11 @@ Authors@R:
         role = c("aut", "cre"),
         email = "maingats2@gmail.com"
     )
-Description: Tools for importing, validating, analysing, and visualising
-    food sensory evaluation data.
+Description: Tools for importing, validating, summarising, analysing, and
+    visualising food sensory evaluation data. Provides workflows for
+    replicated trained-panel and quantitative descriptive analysis (QDA)
+    studies, including panel analysis of variance, assessor performance
+    diagnostics, post-hoc comparisons, and principal component analysis.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
