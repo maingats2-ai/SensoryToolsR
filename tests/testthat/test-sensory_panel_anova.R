@@ -314,3 +314,102 @@ test_that("sensory_panel_anova reports missing required columns", {
     "Missing required column"
   )
 })
+
+test_that("product effect uses Product x Assessor as error term", {
+
+  test_data <- data.frame(
+    assessor = rep(
+      c("A01", "A02", "A03", "A04"),
+      each = 6
+    ),
+
+    session = rep(
+      rep(c("S1", "S2"), each = 3),
+      times = 4
+    ),
+
+    product = rep(
+      c("P1", "P2", "P3"),
+      times = 8
+    ),
+
+    sweetness = c(
+      7.2, 5.1, 3.2,
+      7.0, 5.3, 3.4,
+
+      7.8, 5.4, 2.9,
+      7.6, 5.2, 3.1,
+
+      6.9, 4.8, 3.5,
+      7.1, 4.9, 3.3,
+
+      7.5, 5.0, 3.1,
+      7.4, 5.2, 3.2
+    )
+  )
+
+  result <- sensory_panel_anova(
+    test_data,
+    attribute = "sweetness"
+  )
+
+  raw_anova <- stats::anova(
+    result$model
+  )
+
+  ms_product <- raw_anova[
+    "product",
+    "Mean Sq"
+  ]
+
+  ms_product_assessor <- raw_anova[
+    "product:assessor",
+    "Mean Sq"
+  ]
+
+  df_product <- raw_anova[
+    "product",
+    "Df"
+  ]
+
+  df_product_assessor <- raw_anova[
+    "product:assessor",
+    "Df"
+  ]
+
+  expected_f <-
+    ms_product /
+    ms_product_assessor
+
+  expected_p <- stats::pf(
+    expected_f,
+    df1 = df_product,
+    df2 = df_product_assessor,
+    lower.tail = FALSE
+  )
+
+  product_row <-
+    result$anova_table[
+      result$anova_table$term == "product",
+      ,
+      drop = FALSE
+    ]
+
+  expect_equal(
+    product_row$f_value,
+    expected_f,
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    product_row$p_value,
+    expected_p,
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    result$product_p_value,
+    expected_p,
+    tolerance = 1e-12
+  )
+})

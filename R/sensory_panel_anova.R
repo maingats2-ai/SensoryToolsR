@@ -224,6 +224,68 @@ sensory_panel_anova <- function(
   anova_table <- stats::anova(model)
 
   # --------------------------------------------------
+  # Product test using Product x Assessor error term
+  # --------------------------------------------------
+
+  product_row <- which(
+    rownames(anova_table) == product
+  )
+
+  interaction_row <- which(
+    rownames(anova_table) == interaction_term
+  )
+
+  if (
+    length(product_row) != 1 ||
+    length(interaction_row) != 1
+  ) {
+    stop(
+      "Unable to identify Product or Product x Assessor terms in the ANOVA table.",
+      call. = FALSE
+    )
+  }
+
+  product_ms <- anova_table[
+    product_row,
+    "Mean Sq"
+  ]
+
+  product_df <- anova_table[
+    product_row,
+    "Df"
+  ]
+
+  interaction_ms <- anova_table[
+    interaction_row,
+    "Mean Sq"
+  ]
+
+  interaction_df <- anova_table[
+    interaction_row,
+    "Df"
+  ]
+
+  product_f <- product_ms /
+    interaction_ms
+
+  product_p <- stats::pf(
+    product_f,
+    df1 = product_df,
+    df2 = interaction_df,
+    lower.tail = FALSE
+  )
+
+  anova_table[
+    product_row,
+    "F value"
+  ] <- product_f
+
+  anova_table[
+    product_row,
+    "Pr(>F)"
+  ] <- product_p
+
+  # --------------------------------------------------
   # Convert ANOVA table to tibble
   # --------------------------------------------------
 
