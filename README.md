@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/maingats2-ai/SensoryToolsR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/maingats2-ai/SensoryToolsR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 **SensoryToolsR** is an R package for the analysis of sensory evaluation data, with an initial focus on **Quantitative Descriptive Analysis (QDA)** and trained sensory panel data.
