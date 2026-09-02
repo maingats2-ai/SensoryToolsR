@@ -28,23 +28,43 @@ An object of class `sensory_panel_anova` containing the fitted
 model, ANOVA table, key p-values, and experimental-design metadata.
 }
 \description{
-Fits an ANOVA model for replicated descriptive sensory data including
-product, assessor, session, and product-by-assessor interaction effects.
+Fits a classical ANOVA model for complete, balanced, replicated
+descriptive sensory panel data including product, assessor, session,
+and product-by-assessor interaction effects.
 }
 \details{
-The model fitted is:
+The fitted model is:
 
 `attribute ~ product + assessor + session + product:assessor`
 
 The terms are interpreted as:
 
-* Product: ability of the panel to discriminate among products.
+* Product: differences among products in the sensory attribute.
 * Assessor: differences in scale use among assessors.
-* Session: systematic differences between replicate sessions.
+* Session: systematic differences among replicate sessions.
 * Product x Assessor: differences among assessors in how they
   discriminate the products.
 
-This function is intended for replicated descriptive sensory panel data.
+For the Product effect, the F statistic is calculated using the
+Product x Assessor mean square as the error term:
+
+`F_product = MS_product / MS_product:assessor`
+
+with Product degrees of freedom in the numerator and
+Product x Assessor degrees of freedom in the denominator.
+
+The Product x Assessor interaction is tested against the residual
+mean square.
+
+This implementation is intended for complete, balanced, replicated
+trained-panel or QDA designs. After incomplete observations are removed,
+there must be exactly one observation for every
+Assessor x Product x Session combination.
+
+Incomplete or otherwise unbalanced panel designs are not analysed by
+this classical implementation. Such designs require a method that
+explicitly accommodates imbalance, such as an appropriate mixed-effects
+modelling approach.
 }
 \examples{
 \dontrun{
