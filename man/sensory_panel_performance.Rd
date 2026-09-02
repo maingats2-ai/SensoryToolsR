@@ -105,9 +105,11 @@ systematically higher or lower part of the scale.
 `mean_level_bias` is currently reported as an informational diagnostic
 and is not used automatically to assign `Review` status.
 
-Design completeness is evaluated for each assessor from the observed
-Product x Session combinations. Incomplete designs are flagged for
-review.
+Design completeness is evaluated separately for each assessor.
+A complete design requires exactly one observation for every expected
+Product x Session combination. Missing combinations and duplicated
+Product x Session cells are therefore treated as incomplete designs
+and are flagged for review.
 
 The default `agreement_threshold = 0.70` and
 `repeatability_multiplier = 1.5` are configurable screening rules used
