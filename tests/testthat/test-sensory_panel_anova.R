@@ -187,33 +187,44 @@ test_that("sensory_panel_anova returns interaction p-value", {
 })
 
 
-test_that("sensory_panel_anova removes incomplete observations", {
+test_that("sensory_panel_anova removes incomplete extra observations", {
 
   test_data <- data.frame(
-    assessor = rep(
-      c("A01", "A02", "A03"),
-      each = 4
+    assessor = c(
+      rep(
+        c("A01", "A02", "A03"),
+        each = 4
+      ),
+      "A01"
     ),
 
-    session = rep(
-      c("S1", "S1", "S2", "S2"),
-      times = 3
+    session = c(
+      rep(
+        c("S1", "S1", "S2", "S2"),
+        times = 3
+      ),
+      "S1"
     ),
 
-    product = rep(
-      c("P1", "P2"),
-      times = 6
+    product = c(
+      rep(
+        c("P1", "P2"),
+        times = 6
+      ),
+      "P1"
     ),
 
     sweetness = c(
       7.0, 5.0,
       7.2, 5.1,
 
-      7.5, NA,
+      7.5, 5.3,
       7.3, 5.4,
 
       6.8, 4.7,
-      7.0, 4.9
+      7.0, 4.9,
+
+      NA
     )
   )
 
@@ -224,10 +235,9 @@ test_that("sensory_panel_anova removes incomplete observations", {
 
   expect_equal(
     result$n_observations,
-    11
+    12
   )
 })
-
 
 test_that("sensory_panel_anova requires at least two sessions", {
 
@@ -411,5 +421,44 @@ test_that("product effect uses Product x Assessor as error term", {
     result$product_p_value,
     expected_p,
     tolerance = 1e-12
+  )
+})
+
+test_that("sensory_panel_anova rejects an incomplete panel design", {
+
+  test_data <- data.frame(
+    assessor = rep(
+      c("A01", "A02", "A03"),
+      each = 4
+    ),
+
+    session = rep(
+      c("S1", "S1", "S2", "S2"),
+      times = 3
+    ),
+
+    product = rep(
+      c("P1", "P2"),
+      times = 6
+    ),
+
+    sweetness = c(
+      7.0, 5.0,
+      7.2, 5.1,
+
+      7.5, NA,
+      7.3, 5.4,
+
+      6.8, 4.7,
+      7.0, 4.9
+    )
+  )
+
+  expect_error(
+    sensory_panel_anova(
+      test_data,
+      attribute = "sweetness"
+    ),
+    "complete Assessor x Product x Session design"
   )
 })

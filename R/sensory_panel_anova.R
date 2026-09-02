@@ -181,6 +181,26 @@ sensory_panel_anova <- function(
   }
 
   # --------------------------------------------------
+  # Require a complete balanced panel design
+  # --------------------------------------------------
+
+  design_counts <- table(
+    analysis_data[[assessor]],
+    analysis_data[[product]],
+    analysis_data[[session]]
+  )
+
+  if (any(design_counts != 1L)) {
+    stop(
+      paste0(
+        "Panel ANOVA requires a complete Assessor x Product x Session design ",
+        "with exactly one observation in every design cell."
+      ),
+      call. = FALSE
+    )
+  }
+
+  # --------------------------------------------------
   # Convert experimental factors
   # --------------------------------------------------
 
