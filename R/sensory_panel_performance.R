@@ -169,6 +169,8 @@ sensory_panel_performance <- function(
   if (
     !is.numeric(alpha) ||
     length(alpha) != 1 ||
+    is.na(alpha) ||
+    !is.finite(alpha) ||
     alpha <= 0 ||
     alpha >= 1
   ) {

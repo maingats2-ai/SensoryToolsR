@@ -407,6 +407,15 @@ test_that("sensory_panel_performance validates screening settings", {
     sensory_panel_performance(
       test_data,
       attribute = "sweetness",
+      alpha = NaN
+    ),
+    "`alpha` must be a single number between 0 and 1"
+  )
+
+  expect_error(
+    sensory_panel_performance(
+      test_data,
+      attribute = "sweetness",
       agreement_threshold = 2
     ),
     "`agreement_threshold` must be between -1 and 1"
