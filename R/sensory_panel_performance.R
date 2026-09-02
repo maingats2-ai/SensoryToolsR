@@ -1,8 +1,8 @@
 #' Evaluate sensory panel performance by assessor
 #'
-#' Calculates assessor-level discrimination, repeatability, agreement,
-#' scale-use, residual error, and experimental-design completeness for
-#' one sensory attribute.
+#' Calculates assessor-level discrimination, session effects,
+#' repeatability, agreement, scale use, residual error, and
+#' experimental-design completeness for one sensory attribute.
 #'
 #' @param data A data frame or tibble containing replicated sensory data.
 #' @param attribute Character. Name of one numeric sensory attribute.
@@ -11,8 +11,8 @@
 #' @param session Character. Name of the session or replicate column.
 #' @param alpha Numeric. Significance level used to flag weak product
 #' discrimination. Default is 0.05.
-#' @param agreement_threshold Numeric. Correlation below this value is
-#' flagged for review. Default is 0.70.
+#' @param agreement_threshold Numeric. Pearson correlation below this
+#' value is flagged for review. Default is 0.70.
 #' @param repeatability_multiplier Numeric. An assessor is flagged for
 #' unusually high repeatability error when their repeatability RMSE is
 #' greater than this multiplier times the panel median RMSE.
@@ -20,26 +20,61 @@
 #'
 #' @return An object of class `sensory_panel_performance` containing:
 #' \itemize{
-#'   \item `assessor_table`: assessor-level performance statistics.
+#'   \item `assessor_table`: assessor-level performance statistics,
+#'   including discrimination, session, repeatability, agreement,
+#'   scale-use, and design diagnostics.
 #'   \item `panel_summary`: panel-level summary statistics.
 #'   \item `attribute`: analysed sensory attribute.
 #'   \item `settings`: thresholds used for screening.
 #' }
 #'
 #' @details
-#' For each assessor, product discrimination is evaluated using:
+#' For each assessor, the model
 #'
 #' `score ~ product + session`
 #'
-#' Repeatability is quantified as the root mean squared deviation of
-#' repeated scores from each assessor-product mean.
+#' is fitted.
 #'
-#' Agreement is calculated as the Pearson correlation between an
-#' assessor's product means and the corresponding product means from
-#' the remaining panel members.
+#' Product discrimination is summarized by `discrimination_f` and
+#' `discrimination_p`. A Product p-value greater than or equal to `alpha`
+#' is flagged as weak discrimination.
 #'
-#' The `status` and `review_reason` fields are screening aids rather than
-#' formal ISO acceptance criteria.
+#' The assessor-specific Session effect from the same model is returned as
+#' `session_f` and `session_p`. These values describe systematic differences
+#' among replicate sessions for that assessor. Session significance is
+#' reported as a diagnostic and is not currently used automatically to
+#' assign `Review` status.
+#'
+#' Repeatability is quantified by `repeatability_rmse`, the root mean
+#' squared deviation of repeated scores from each assessor-product mean.
+#' This metric retains session-to-session shifts and therefore reflects
+#' reproducibility of scores across replicate sessions.
+#'
+#' `residual_mse` is the residual mean square from the assessor-level
+#' `score ~ product + session` model. It is provided as an additional
+#' model diagnostic and is not used as the repeatability screening metric.
+#'
+#' Agreement is measured by `agreement_correlation`, the Pearson
+#' correlation between an assessor's product means and the corresponding
+#' product means calculated from all remaining assessors. The assessor
+#' being evaluated is excluded from the reference panel mean.
+#'
+#' Pearson correlation measures similarity in product-profile pattern,
+#' not absolute agreement in score level. An assessor may therefore have
+#' a high correlation while systematically using a higher or lower part
+#' of the scale.
+#'
+#' Design completeness is evaluated for each assessor from the observed
+#' Product x Session combinations. Incomplete designs are flagged for
+#' review.
+#'
+#' The default `agreement_threshold = 0.70` and
+#' `repeatability_multiplier = 1.5` are configurable screening rules used
+#' by SensoryToolsR. They should not be interpreted as universal sensory
+#' panel acceptance limits or formal ISO pass/fail criteria.
+#'
+#' The `status` and `review_reason` fields are screening aids intended to
+#' identify assessors or data patterns that warrant further examination.
 #'
 #' @examples
 #' \dontrun{
