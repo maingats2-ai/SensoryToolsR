@@ -22,7 +22,7 @@
 #' \itemize{
 #'   \item `assessor_table`: assessor-level performance statistics,
 #'   including discrimination, session, repeatability, agreement,
-#'   scale-use, and design diagnostics.
+#'   mean level bias, scale-use, and design diagnostics.
 #'   \item `panel_summary`: panel-level summary statistics.
 #'   \item `attribute`: analysed sensory attribute.
 #'   \item `settings`: thresholds used for screening.
@@ -63,6 +63,22 @@
 #' not absolute agreement in score level. An assessor may therefore have
 #' a high correlation while systematically using a higher or lower part
 #' of the scale.
+#'
+#' `mean_level_bias` measures systematic score-level displacement relative
+#' to the remaining panel. For each product, the assessor's mean score is
+#' compared with the corresponding mean score calculated from all remaining
+#' assessors, and these product-specific differences are then averaged.
+#'
+#' Positive values indicate that the assessor tends to score higher than
+#' the remaining panel, whereas negative values indicate systematically
+#' lower scores. Values near zero indicate little average score-level shift.
+#'
+#' `mean_level_bias` complements `agreement_correlation`: an assessor may
+#' show a high correlation with the remaining panel while still using a
+#' systematically higher or lower part of the scale.
+#'
+#' `mean_level_bias` is currently reported as an informational diagnostic
+#' and is not used automatically to assign `Review` status.
 #'
 #' Design completeness is evaluated for each assessor from the observed
 #' Product x Session combinations. Incomplete designs are flagged for
