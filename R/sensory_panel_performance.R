@@ -183,6 +183,8 @@ sensory_panel_performance <- function(
   if (
     !is.numeric(agreement_threshold) ||
     length(agreement_threshold) != 1 ||
+    is.na(agreement_threshold) ||
+    !is.finite(agreement_threshold) ||
     agreement_threshold < -1 ||
     agreement_threshold > 1
   ) {

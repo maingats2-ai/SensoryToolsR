@@ -425,6 +425,15 @@ test_that("sensory_panel_performance validates screening settings", {
     sensory_panel_performance(
       test_data,
       attribute = "sweetness",
+      agreement_threshold = NaN
+    ),
+    "`agreement_threshold` must be between -1 and 1"
+  )
+
+  expect_error(
+    sensory_panel_performance(
+      test_data,
+      attribute = "sweetness",
       repeatability_multiplier = 0
     ),
     "`repeatability_multiplier` must be a finite number greater than 0"
