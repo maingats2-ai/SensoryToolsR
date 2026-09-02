@@ -299,6 +299,8 @@ sensory_panel_performance <- function(
 
       discrimination_f <- NA_real_
       discrimination_p <- NA_real_
+      session_f <- NA_real_
+      session_p <- NA_real_
       residual_mse <- NA_real_
 
       if (
@@ -324,6 +326,19 @@ sensory_panel_performance <- function(
 
           discrimination_p <- fit_anova[
             "product",
+            "Pr(>F)"
+          ]
+        }
+
+        if ("session" %in% rownames(fit_anova)) {
+
+          session_f <- fit_anova[
+            "session",
+            "F value"
+          ]
+
+          session_p <- fit_anova[
+            "session",
             "Pr(>F)"
           ]
         }
@@ -429,6 +444,8 @@ sensory_panel_performance <- function(
         score_range = assessor_range,
         discrimination_f = discrimination_f,
         discrimination_p = discrimination_p,
+        session_f = session_f,
+        session_p = session_p,
         repeatability_rmse = repeatability_rmse,
         residual_mse = residual_mse,
         agreement_correlation = agreement_correlation,

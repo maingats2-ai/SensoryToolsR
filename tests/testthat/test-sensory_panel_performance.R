@@ -421,3 +421,75 @@ test_that("sensory_panel_performance validates screening settings", {
     "`repeatability_multiplier` must be greater than 0"
   )
 })
+
+test_that("sensory_panel_performance reports assessor session effects", {
+
+  test_data <-
+    make_panel_performance_data()
+
+  result <- sensory_panel_performance(
+    test_data,
+    attribute = "sweetness"
+  )
+
+  a01_data <- test_data[
+    test_data$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  a01_data$product <- factor(
+    a01_data$product
+  )
+
+  a01_data$session <- factor(
+    a01_data$session
+  )
+
+  fit <- stats::lm(
+    sweetness ~ product + session,
+    data = a01_data
+  )
+
+  fit_anova <- stats::anova(
+    fit
+  )
+
+  expected_f <- fit_anova[
+    "session",
+    "F value"
+  ]
+
+  expected_p <- fit_anova[
+    "session",
+    "Pr(>F)"
+  ]
+
+  a01_result <- result$assessor_table[
+    result$assessor_table$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  expect_true(
+    all(
+      c(
+        "session_f",
+        "session_p"
+      ) %in%
+        names(result$assessor_table)
+    )
+  )
+
+  expect_equal(
+    a01_result$session_f,
+    expected_f,
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    a01_result$session_p,
+    expected_p,
+    tolerance = 1e-12
+  )
+})
