@@ -1,6 +1,6 @@
-#' Perform ANOVA for a sensory attribute
+#' Perform simple additive ANOVA for a sensory attribute
 #'
-#' Fits a fixed-effects ANOVA model for one sensory attribute using
+#' Fits a simple additive ANOVA model for one sensory attribute using
 #' product and assessor effects.
 #'
 #' @param data A data frame or tibble containing sensory data.
@@ -12,14 +12,30 @@
 #' ANOVA table, product p-value, and model metadata.
 #'
 #' @details
-#' The default model is:
+#' The fitted model is:
 #'
 #' `attribute ~ product + assessor`
 #'
-#' This is intended as a transparent starting model for balanced
-#' descriptive sensory panel data. More complex models involving session,
-#' replicate, interaction, or random assessor effects should be fitted
-#' separately.
+#' Product and assessor are included as additive effects, and the ordinary
+#' residual mean square from this model is used as the error term for the
+#' Product F test.
+#'
+#' This function is intended as a simple analysis for sensory data with
+#' one observation per Assessor x Product combination, or when an additive
+#' Product + Assessor model is specifically desired.
+#'
+#' If replicated Assessor x Product observations are detected, the function
+#' issues a warning because session effects and Product x Assessor variation
+#' are not represented explicitly in this model.
+#'
+#' For replicated trained-panel or QDA data with session or replicate
+#' information, use [sensory_panel_anova()] instead. That function explicitly
+#' includes session and Product x Assessor effects and uses the
+#' Product x Assessor mean square as the error term for the Product test.
+#'
+#' Post-hoc comparisons produced by [sensory_posthoc()] use the fitted
+#' `sensory_anova` model and therefore inherit the same additive-model
+#' assumptions.
 #'
 #' @examples
 #' \dontrun{
