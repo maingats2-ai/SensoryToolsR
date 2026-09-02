@@ -418,7 +418,7 @@ test_that("sensory_panel_performance validates screening settings", {
       attribute = "sweetness",
       repeatability_multiplier = 0
     ),
-    "`repeatability_multiplier` must be greater than 0"
+    "`repeatability_multiplier` must be a finite number greater than 0"
   )
 })
 
@@ -627,5 +627,17 @@ test_that("sensory_panel_performance flags duplicate design cells", {
     a01_result$review_reason,
     "design",
     ignore.case = TRUE
+  )
+})
+
+test_that("sensory_panel_performance rejects infinite repeatability multiplier", {
+
+  expect_error(
+    sensory_panel_performance(
+      make_panel_performance_data(),
+      attribute = "sweetness",
+      repeatability_multiplier = Inf
+    ),
+    "repeatability_multiplier"
   )
 })

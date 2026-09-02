@@ -193,10 +193,12 @@ sensory_panel_performance <- function(
   if (
     !is.numeric(repeatability_multiplier) ||
     length(repeatability_multiplier) != 1 ||
+    is.na(repeatability_multiplier) ||
+    !is.finite(repeatability_multiplier) ||
     repeatability_multiplier <= 0
   ) {
     stop(
-      "`repeatability_multiplier` must be greater than 0.",
+      "`repeatability_multiplier` must be a finite number greater than 0.",
       call. = FALSE
     )
   }
