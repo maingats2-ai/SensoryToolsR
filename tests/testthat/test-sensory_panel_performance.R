@@ -574,3 +574,58 @@ test_that("sensory_panel_performance reports assessor mean level bias", {
     1.5
   )
 })
+
+
+test_that("sensory_panel_performance flags duplicate design cells", {
+
+  test_data <-
+    make_panel_performance_data()
+
+  duplicate_row <- test_data[
+    test_data$assessor == "A01" &
+      test_data$product == "P1" &
+      test_data$session == "S1",
+    ,
+    drop = FALSE
+  ]
+
+  test_data <- rbind(
+    test_data,
+    duplicate_row
+  )
+
+  result <- sensory_panel_performance(
+    test_data,
+    attribute = "sweetness"
+  )
+
+  a01_result <- result$assessor_table[
+    result$assessor_table$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  expect_equal(
+    a01_result$n_observations,
+    a01_result$expected_design_records + 1
+  )
+
+  expect_false(
+    a01_result$design_complete
+  )
+
+  expect_true(
+    a01_result$design_flag
+  )
+
+  expect_equal(
+    a01_result$status,
+    "Review"
+  )
+
+  expect_match(
+    a01_result$review_reason,
+    "design",
+    ignore.case = TRUE
+  )
+})

@@ -318,7 +318,10 @@ sensory_panel_performance <- function(
         observed_design
       )
 
-      design_complete <- n_observed_design ==
+      design_complete <-
+        n_observed_design ==
+        expected_records &&
+        nrow(assessor_data) ==
         expected_records
 
       # -----------------------------------------------
