@@ -89,6 +89,11 @@ not absolute agreement in score level. An assessor may therefore have
 a high correlation while systematically using a higher or lower part
 of the scale.
 
+If `agreement_correlation` cannot be calculated, for example because
+one of the compared product-mean profiles has no variation, the value
+is returned as `NA`. Undefined agreement is flagged for review and the
+corresponding `review_reason` is reported as `"Agreement unavailable"`.
+
 `mean_level_bias` measures systematic score-level displacement relative
 to the remaining panel. For each product, the assessor's mean score is
 compared with the corresponding mean score calculated from all remaining
