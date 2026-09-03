@@ -350,6 +350,28 @@ test_that("sensory_panel_multi validates agreement threshold before analysis", {
   )
 })
 
+test_that("sensory_panel_multi validates repeatability multiplier before analysis", {
+
+  test_data <- make_multi_panel_data()
+
+  test_data <-
+    test_data[
+      test_data$product ==
+        unique(test_data$product)[1],
+      ,
+      drop = FALSE
+    ]
+
+  expect_error(
+    sensory_panel_multi(
+      test_data,
+      attributes = "sweetness",
+      repeatability_multiplier = Inf
+    ),
+    "`repeatability_multiplier` must be a finite number greater than 0"
+  )
+})
+
 test_that("sensory_panel_multi propagates undefined agreement review", {
 
   test_data <- qda_example
