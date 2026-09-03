@@ -597,9 +597,19 @@ sensory_panel_performance <- function(
       }
 
       if (assessor_table$agreement_flag[i]) {
+
+        agreement_reason <-
+          if (is.na(
+            assessor_table$agreement_correlation[i]
+          )) {
+            "Agreement unavailable"
+          } else {
+            "Low agreement with panel"
+          }
+
         reasons <- c(
           reasons,
-          "Low agreement with panel"
+          agreement_reason
         )
       }
 

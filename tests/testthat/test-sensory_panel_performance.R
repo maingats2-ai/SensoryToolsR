@@ -705,9 +705,8 @@ test_that("sensory_panel_performance flags undefined agreement", {
     "Review"
   )
 
-  expect_match(
+  expect_equal(
     a01_result$review_reason,
-    "agreement",
-    ignore.case = TRUE
+    "Agreement unavailable"
   )
 })
