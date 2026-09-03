@@ -327,3 +327,55 @@ test_that("sensory_panel_multi validates alpha", {
     "`alpha` must be a single number between 0 and 1"
   )
 })
+
+test_that("sensory_panel_multi propagates undefined agreement review", {
+
+  test_data <- qda_example
+
+  test_data$sweetness[
+    test_data$assessor != "A01" &
+      test_data$session == "S1"
+  ] <- 4.5
+
+  test_data$sweetness[
+    test_data$assessor != "A01" &
+      test_data$session == "S2"
+  ] <- 5.0
+
+  test_data$sweetness[
+    test_data$assessor != "A01" &
+      test_data$session == "S3"
+  ] <- 5.5
+
+  result <- suppressWarnings(
+    sensory_panel_multi(
+      test_data,
+      attributes = "sweetness"
+    )
+  )
+
+  a01_result <-
+    result$assessor_tables$sweetness[
+      result$assessor_tables$sweetness$assessor == "A01",
+      ,
+      drop = FALSE
+    ]
+
+  expect_true(
+    is.na(a01_result$agreement_correlation)
+  )
+
+  expect_true(
+    a01_result$agreement_flag
+  )
+
+  expect_equal(
+    a01_result$review_reason,
+    "Agreement unavailable"
+  )
+
+  expect_equal(
+    a01_result$status,
+    "Review"
+  )
+})
