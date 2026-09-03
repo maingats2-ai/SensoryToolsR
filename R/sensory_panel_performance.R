@@ -556,9 +556,9 @@ sensory_panel_performance <- function(
     assessor_table$discrimination_p >= alpha
 
   assessor_table$agreement_flag <-
-    !is.na(
+    is.na(
       assessor_table$agreement_correlation
-    ) &
+    ) |
     assessor_table$agreement_correlation <
     agreement_threshold
 
