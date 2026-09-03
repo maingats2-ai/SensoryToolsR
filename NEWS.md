@@ -3,6 +3,8 @@
 ## Development version
 
 * Development toward the next maintenance release.
+* Undefined assessor agreement correlations are now flagged for review
+  instead of being treated as acceptable agreement.
 
 # SensoryToolsR 0.1.0
 
