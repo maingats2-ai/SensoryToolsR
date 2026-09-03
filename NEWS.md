@@ -1,3 +1,9 @@
+# SensoryToolsR 0.1.0.9000
+
+## Development version
+
+* Development toward the next maintenance release.
+
 # SensoryToolsR 0.1.0
 
 ## Initial release
