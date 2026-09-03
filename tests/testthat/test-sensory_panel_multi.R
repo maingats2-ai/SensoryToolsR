@@ -328,6 +328,28 @@ test_that("sensory_panel_multi validates alpha", {
   )
 })
 
+test_that("sensory_panel_multi validates agreement threshold before analysis", {
+
+  test_data <- make_multi_panel_data()
+
+  test_data <-
+    test_data[
+      test_data$product ==
+        unique(test_data$product)[1],
+      ,
+      drop = FALSE
+    ]
+
+  expect_error(
+    sensory_panel_multi(
+      test_data,
+      attributes = "sweetness",
+      agreement_threshold = NaN
+    ),
+    "`agreement_threshold` must be between -1 and 1"
+  )
+})
+
 test_that("sensory_panel_multi propagates undefined agreement review", {
 
   test_data <- qda_example

@@ -157,6 +157,20 @@ sensory_panel_multi <- function(
     )
   }
 
+  if (
+    !is.numeric(agreement_threshold) ||
+    length(agreement_threshold) != 1 ||
+    is.na(agreement_threshold) ||
+    !is.finite(agreement_threshold) ||
+    agreement_threshold < -1 ||
+    agreement_threshold > 1
+  ) {
+    stop(
+      "`agreement_threshold` must be between -1 and 1.",
+      call. = FALSE
+    )
+  }
+
   # --------------------------------------------------
   # Containers
   # --------------------------------------------------
