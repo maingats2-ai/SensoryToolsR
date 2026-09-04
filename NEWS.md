@@ -5,6 +5,8 @@
 * Development toward the next maintenance release.
 * Undefined assessor agreement correlations are now flagged for review
   instead of being treated as acceptable agreement.
+* `sensory_panel_multi()` now validates agreement and repeatability
+  screening settings before running any attribute analyses.
 
 # SensoryToolsR 0.1.0
 
