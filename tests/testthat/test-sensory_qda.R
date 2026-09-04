@@ -681,6 +681,52 @@ test_that("sensory_qda validates alpha", {
 })
 
 
+test_that("sensory_qda validates agreement threshold", {
+
+  test_data <-
+    make_qda_data()
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      ),
+      agreement_threshold = NaN
+    ),
+    "`agreement_threshold` must be between -1 and 1"
+  )
+})
+
+
+test_that("sensory_qda validates repeatability multiplier before analysis", {
+
+  test_data <-
+    make_qda_data()
+
+  test_data <-
+    test_data[
+      test_data$product ==
+        unique(test_data$product)[1],
+      ,
+      drop = FALSE
+    ]
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      ),
+      repeatability_multiplier = Inf
+    ),
+    "`repeatability_multiplier` must be a finite number greater than 0"
+  )
+})
+
+
 test_that("sensory_qda validates PCA settings", {
 
   test_data <-
