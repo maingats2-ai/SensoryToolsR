@@ -7,6 +7,8 @@
   instead of being treated as acceptable agreement.
 * `sensory_panel_multi()` now validates agreement and repeatability
   screening settings before running any attribute analyses.
+* `sensory_qda()` now rejects non-finite repeatability screening
+  multipliers before starting the integrated analysis workflow.
 
 # SensoryToolsR 0.1.0
 
