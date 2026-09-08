@@ -793,6 +793,25 @@ test_that("sensory_qda rejects non-finite pca_top_n", {
 })
 
 
+test_that("sensory_qda rejects non-finite pca_components", {
+
+  test_data <-
+    make_qda_data()
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      ),
+      pca_components = c(1, Inf)
+    ),
+    "`pca_components` must contain positive integer component numbers"
+  )
+})
+
+
 test_that("sensory_qda rejects unavailable PCA components", {
 
   test_data <-

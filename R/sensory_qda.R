@@ -260,6 +260,7 @@ sensory_qda <- function(
     !is.numeric(pca_components) ||
     length(pca_components) < 1 ||
     any(is.na(pca_components)) ||
+    any(!is.finite(pca_components)) ||
     any(pca_components %% 1 != 0) ||
     any(pca_components < 1)
   ) {
