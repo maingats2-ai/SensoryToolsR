@@ -13,6 +13,8 @@
   clear validation error instead of a low-level R error.
 * `sensory_qda()` now rejects non-finite `pca_components` values with a
   clear validation error instead of a low-level R error.
+* `sensory_qda()` now rejects missing or empty sensory attribute names
+  with a clear validation error before column lookup.
 
 # SensoryToolsR 0.1.0
 
