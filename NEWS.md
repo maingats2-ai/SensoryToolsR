@@ -11,6 +11,8 @@
   multipliers before starting the integrated analysis workflow.
 * `sensory_qda()` now rejects non-finite `pca_top_n` values with a
   clear validation error instead of a low-level R error.
+* `sensory_qda()` now rejects non-finite `pca_components` values with a
+  clear validation error instead of a low-level R error.
 
 # SensoryToolsR 0.1.0
 
