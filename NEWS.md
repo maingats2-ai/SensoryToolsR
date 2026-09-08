@@ -15,6 +15,8 @@
   clear validation error instead of a low-level R error.
 * `sensory_qda()` now rejects missing or empty sensory attribute names
   with a clear validation error before column lookup.
+* `sensory_qda()` now rejects duplicate assignments of `product`,
+  `assessor`, and `session` before starting the analysis workflow.
 
 # SensoryToolsR 0.1.0
 
