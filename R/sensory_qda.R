@@ -150,6 +150,13 @@ sensory_qda <- function(
     )
   }
 
+  if (anyDuplicated(design_columns)) {
+    stop(
+      "`product`, `assessor`, and `session` must refer to different columns.",
+      call. = FALSE
+    )
+  }
+
   missing_design_columns <- setdiff(
     design_columns,
     names(data)
