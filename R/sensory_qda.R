@@ -109,6 +109,16 @@ sensory_qda <- function(
     )
   }
 
+  if (
+    any(is.na(attributes)) ||
+    any(attributes == "")
+  ) {
+    stop(
+      "`attributes` must contain valid sensory attribute names.",
+      call. = FALSE
+    )
+  }
+
   if (anyDuplicated(attributes)) {
     stop(
       "`attributes` must not contain duplicate names.",

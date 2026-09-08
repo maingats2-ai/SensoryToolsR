@@ -552,6 +552,26 @@ test_that("sensory_qda rejects missing sensory attributes", {
 })
 
 
+test_that("sensory_qda rejects invalid attribute names", {
+
+  expect_error(
+    sensory_qda(
+      qda_example,
+      attributes = c("sweetness", NA)
+    ),
+    "`attributes` must contain valid sensory attribute names"
+  )
+
+  expect_error(
+    sensory_qda(
+      qda_example,
+      attributes = c("sweetness", "")
+    ),
+    "`attributes` must contain valid sensory attribute names"
+  )
+})
+
+
 test_that("sensory_qda rejects non-numeric sensory attributes", {
 
   test_data <-
