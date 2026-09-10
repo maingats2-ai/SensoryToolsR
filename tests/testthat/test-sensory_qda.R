@@ -650,6 +650,27 @@ test_that("sensory_qda rejects duplicate design column assignments", {
 })
 
 
+test_that("sensory_qda rejects attributes used as design columns", {
+
+  test_data <-
+    make_qda_data()
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      ),
+      product = "sweetness",
+      assessor = "assessor",
+      session = "session"
+    ),
+    "`attributes` must not overlap with `product`, `assessor`, or `session` columns"
+  )
+})
+
+
 test_that("sensory_qda requires at least three products", {
 
   test_data <-

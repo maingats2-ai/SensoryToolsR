@@ -157,6 +157,13 @@ sensory_qda <- function(
     )
   }
 
+  if (length(intersect(attributes, design_columns)) > 0) {
+    stop(
+      "`attributes` must not overlap with `product`, `assessor`, or `session` columns.",
+      call. = FALSE
+    )
+  }
+
   missing_design_columns <- setdiff(
     design_columns,
     names(data)
