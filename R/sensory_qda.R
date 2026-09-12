@@ -145,7 +145,7 @@ sensory_qda <- function(
       !is.character(x) ||
         length(x) != 1 ||
         is.na(x) ||
-        x == ""
+        trimws(x) == ""
     },
     logical(1)
   )
