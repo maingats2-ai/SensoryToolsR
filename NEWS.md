@@ -28,6 +28,8 @@
   with the same clear validation used for missing or empty names.
 * `sensory_qda()` now rejects whitespace-only `product`, `assessor`,
   and `session` column names before design-column lookup.
+* `sensory_qda()` now rejects input data with duplicate column names
+  before analysis, avoiding downstream `dplyr` errors.
 
 # SensoryToolsR 0.1.0
 
