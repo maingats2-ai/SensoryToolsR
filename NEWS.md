@@ -17,6 +17,8 @@
   with a clear validation error before column lookup.
 * `sensory_qda()` now rejects duplicate assignments of `product`,
   `assessor`, and `session` before starting the analysis workflow.
+* `sensory_qda()` now rejects overlap between sensory attributes and
+  `product`, `assessor`, or `session` design columns before analysis.
 
 # SensoryToolsR 0.1.0
 
