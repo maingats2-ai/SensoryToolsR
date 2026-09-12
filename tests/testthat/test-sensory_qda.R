@@ -153,6 +153,28 @@ test_that("sensory_qda rejects empty data", {
 })
 
 
+test_that("sensory_qda rejects duplicated data column names", {
+
+  test_data <-
+    make_qda_data()
+
+  names(test_data)[
+    names(test_data) == "bitterness"
+  ] <- "sweetness"
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "umami"
+      )
+    ),
+    "`data` must not contain duplicate column names"
+  )
+})
+
+
 test_that("sensory_qda returns the correct object structure", {
 
   test_data <-
