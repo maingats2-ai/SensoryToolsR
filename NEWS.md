@@ -22,6 +22,8 @@
 * `sensory_qda()` now validates `product`, `assessor`, and `session`
   column names before combining them, preventing type coercion from
   masking invalid design-column inputs.
+* `sensory_qda()` now rejects empty data frames with a clear validation
+  error before starting the analysis workflow.
 
 # SensoryToolsR 0.1.0
 
