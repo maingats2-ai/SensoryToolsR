@@ -118,7 +118,7 @@ sensory_qda <- function(
 
   if (
     any(is.na(attributes)) ||
-    any(attributes == "")
+    any(trimws(attributes) == "")
   ) {
     stop(
       "`attributes` must contain valid sensory attribute names.",
