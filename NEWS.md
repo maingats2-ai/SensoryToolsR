@@ -24,6 +24,8 @@
   masking invalid design-column inputs.
 * `sensory_qda()` now rejects empty data frames with a clear validation
   error before starting the analysis workflow.
+* `sensory_qda()` now rejects whitespace-only sensory attribute names
+  with the same clear validation used for missing or empty names.
 
 # SensoryToolsR 0.1.0
 
