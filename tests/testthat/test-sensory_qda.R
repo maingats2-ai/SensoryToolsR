@@ -629,6 +629,25 @@ test_that("sensory_qda rejects duplicate sensory attributes", {
 })
 
 
+test_that("sensory_qda rejects non-character design column names", {
+
+  test_data <-
+    make_qda_data()
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      ),
+      product = 1
+    ),
+    "`product`, `assessor`, and `session` must each be one column name"
+  )
+})
+
+
 test_that("sensory_qda rejects duplicate design column assignments", {
 
   test_data <-

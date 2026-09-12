@@ -126,14 +126,14 @@ sensory_qda <- function(
     )
   }
 
-  design_columns <- c(
-    product,
-    assessor,
-    session
+  design_names <- list(
+    product = product,
+    assessor = assessor,
+    session = session
   )
 
   invalid_design_names <- vapply(
-    design_columns,
+    design_names,
     function(x) {
       !is.character(x) ||
         length(x) != 1 ||
@@ -149,6 +149,12 @@ sensory_qda <- function(
       call. = FALSE
     )
   }
+
+  design_columns <- c(
+    product,
+    assessor,
+    session
+  )
 
   if (anyDuplicated(design_columns)) {
     stop(
