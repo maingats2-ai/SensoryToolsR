@@ -19,6 +19,9 @@
   `assessor`, and `session` before starting the analysis workflow.
 * `sensory_qda()` now rejects overlap between sensory attributes and
   `product`, `assessor`, or `session` design columns before analysis.
+* `sensory_qda()` now validates `product`, `assessor`, and `session`
+  column names before combining them, preventing type coercion from
+  masking invalid design-column inputs.
 
 # SensoryToolsR 0.1.0
 
