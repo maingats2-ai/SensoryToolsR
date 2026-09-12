@@ -98,6 +98,13 @@ sensory_qda <- function(
     )
   }
 
+  if (nrow(data) < 1) {
+    stop(
+      "`data` must contain at least one row.",
+      call. = FALSE
+    )
+  }
+
   if (
     missing(attributes) ||
     !is.character(attributes) ||

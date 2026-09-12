@@ -132,6 +132,27 @@ qda_test_attributes <- c(
 )
 
 
+test_that("sensory_qda rejects empty data", {
+
+  test_data <-
+    make_qda_data()
+
+  test_data <-
+    test_data[0, , drop = FALSE]
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      )
+    ),
+    "`data` must contain at least one row"
+  )
+})
+
+
 test_that("sensory_qda returns the correct object structure", {
 
   test_data <-
