@@ -30,6 +30,8 @@
   and `session` column names before design-column lookup.
 * `sensory_qda()` now rejects input data with duplicate column names
   before analysis, avoiding downstream `dplyr` errors.
+* `sensory_qda()` now rejects missing, empty, or whitespace-only input
+  data column names before analysis, avoiding downstream subsetting errors.
 
 # SensoryToolsR 0.1.0
 
