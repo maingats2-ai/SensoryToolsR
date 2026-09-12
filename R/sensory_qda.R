@@ -113,6 +113,16 @@ sensory_qda <- function(
   }
 
   if (
+    any(is.na(names(data))) ||
+    any(trimws(names(data)) == "")
+  ) {
+    stop(
+      "`data` must not contain empty column names.",
+      call. = FALSE
+    )
+  }
+
+  if (
     missing(attributes) ||
     !is.character(attributes) ||
     length(attributes) < 2
