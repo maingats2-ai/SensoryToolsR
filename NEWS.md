@@ -26,6 +26,8 @@
   error before starting the analysis workflow.
 * `sensory_qda()` now rejects whitespace-only sensory attribute names
   with the same clear validation used for missing or empty names.
+* `sensory_qda()` now rejects whitespace-only `product`, `assessor`,
+  and `session` column names before design-column lookup.
 
 # SensoryToolsR 0.1.0
 
