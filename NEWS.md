@@ -32,6 +32,9 @@
   before analysis, avoiding downstream `dplyr` errors.
 * `sensory_qda()` now rejects missing, empty, or whitespace-only input
   data column names before analysis, avoiding downstream subsetting errors.
+* `sensory_panel_performance()` now skips assessor-level ANOVA when
+  scores are completely constant, returning unavailable F- and p-values
+  instead of unreliable ANOVA results and warnings.
 
 # SensoryToolsR 0.1.0
 
