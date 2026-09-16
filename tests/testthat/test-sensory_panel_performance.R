@@ -710,3 +710,51 @@ test_that("sensory_panel_performance flags undefined agreement", {
     "Agreement unavailable"
   )
 })
+
+test_that("sensory_panel_performance handles constant assessor scores", {
+
+  test_data <- qda_example
+
+  test_data$sweetness[
+    test_data$assessor == "A01"
+  ] <- 5
+
+  expect_warning(
+    result <- sensory_panel_performance(
+      test_data,
+      attribute = "sweetness"
+    ),
+    NA
+  )
+
+  a01_result <- result$assessor_table[
+    result$assessor_table$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  expect_true(
+    is.na(a01_result$discrimination_f)
+  )
+
+  expect_true(
+    is.na(a01_result$discrimination_p)
+  )
+
+  expect_true(
+    is.na(a01_result$session_f)
+  )
+
+  expect_true(
+    is.na(a01_result$session_p)
+  )
+
+  expect_true(
+    a01_result$discrimination_flag
+  )
+
+  expect_equal(
+    a01_result$status,
+    "Review"
+  )
+})

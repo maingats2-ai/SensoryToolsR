@@ -372,7 +372,8 @@ sensory_panel_performance <- function(
 
       if (
         length(unique(assessor_data$product)) >= 2 &&
-        length(unique(assessor_data$session)) >= 2
+        length(unique(assessor_data$session)) >= 2 &&
+        stats::sd(assessor_data$score) > 0
       ) {
 
         fit <- stats::lm(
