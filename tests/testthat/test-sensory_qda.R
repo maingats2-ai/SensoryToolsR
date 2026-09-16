@@ -197,6 +197,50 @@ test_that("sensory_qda rejects empty data column names", {
 })
 
 
+test_that("sensory_qda rejects whitespace-only data column names", {
+
+  test_data <-
+    make_qda_data()
+
+  names(test_data)[
+    names(test_data) == "juiciness"
+  ] <- "   "
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      )
+    ),
+    "`data` must not contain empty column names"
+  )
+})
+
+
+test_that("sensory_qda rejects missing data column names", {
+
+  test_data <-
+    make_qda_data()
+
+  names(test_data)[
+    names(test_data) == "juiciness"
+  ] <- NA_character_
+
+  expect_error(
+    sensory_qda(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      )
+    ),
+    "`data` must not contain empty column names"
+  )
+})
+
+
 test_that("sensory_qda returns the correct object structure", {
 
   test_data <-
