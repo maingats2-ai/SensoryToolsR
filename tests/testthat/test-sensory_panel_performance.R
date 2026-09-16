@@ -758,3 +758,67 @@ test_that("sensory_panel_performance handles constant assessor scores", {
     "Review"
   )
 })
+
+test_that("sensory_panel_performance retains assessor with all scores missing", {
+
+  test_data <- qda_example
+
+  test_data$sweetness[
+    test_data$assessor == "A01"
+  ] <- NA_real_
+
+  result <- sensory_panel_performance(
+    test_data,
+    attribute = "sweetness"
+  )
+
+  a01_result <- result$assessor_table[
+    result$assessor_table$assessor == "A01",
+    ,
+    drop = FALSE
+  ]
+
+  expect_equal(
+    nrow(a01_result),
+    1
+  )
+
+  expect_equal(
+    a01_result$n_observations,
+    0
+  )
+
+  expect_false(
+    a01_result$design_complete
+  )
+
+  expect_true(
+    is.na(a01_result$discrimination_f)
+  )
+
+  expect_true(
+    is.na(a01_result$discrimination_p)
+  )
+
+  expect_true(
+    is.na(a01_result$repeatability_rmse)
+  )
+
+  expect_true(
+    is.na(a01_result$agreement_correlation)
+  )
+
+  expect_true(
+    a01_result$design_flag
+  )
+
+  expect_equal(
+    a01_result$status,
+    "Review"
+  )
+
+  expect_equal(
+    result$panel_summary$n_assessors,
+    6
+  )
+})

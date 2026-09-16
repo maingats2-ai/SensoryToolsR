@@ -235,15 +235,15 @@ sensory_panel_performance <- function(
   }
 
   products <- sort(
-    unique(analysis_data[[product]])
+    unique(data[[product]][!is.na(data[[product]])])
   )
 
   assessors <- sort(
-    unique(analysis_data[[assessor]])
+    unique(data[[assessor]][!is.na(data[[assessor]])])
   )
 
   sessions <- sort(
-    unique(analysis_data[[session]])
+    unique(data[[session]][!is.na(data[[session]])])
   )
 
   if (length(products) < 2) {
@@ -322,6 +322,35 @@ sensory_panel_performance <- function(
       assessor_data$session <- droplevels(
         assessor_data$session
       )
+
+      if (nrow(assessor_data) == 0) {
+
+        return(
+          data.frame(
+            assessor = as.character(
+              current_assessor
+            ),
+            n_observations = 0L,
+            expected_design_records = expected_records,
+            observed_design_records = 0L,
+            design_complete = FALSE,
+            mean_score = NA_real_,
+            sd_score = NA_real_,
+            min_score = NA_real_,
+            max_score = NA_real_,
+            score_range = NA_real_,
+            discrimination_f = NA_real_,
+            discrimination_p = NA_real_,
+            session_f = NA_real_,
+            session_p = NA_real_,
+            repeatability_rmse = NA_real_,
+            residual_mse = NA_real_,
+            mean_level_bias = NA_real_,
+            agreement_correlation = NA_real_,
+            stringsAsFactors = FALSE
+          )
+        )
+      }
 
       observed_design <- unique(
         assessor_data[c("product", "session")]
