@@ -35,6 +35,9 @@
 * `sensory_panel_performance()` now skips assessor-level ANOVA when
   scores are completely constant, returning unavailable F- and p-values
   instead of unreliable ANOVA results and warnings.
+* `sensory_panel_performance()` now retains assessors with no usable
+  scores for an attribute, flags them for review, and reports unavailable
+  diagnostics instead of silently dropping them from the panel summary.
 
 # SensoryToolsR 0.1.0
 
