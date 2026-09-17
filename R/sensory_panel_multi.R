@@ -215,15 +215,28 @@ sensory_panel_multi <- function(
 
     current_attribute <- attributes[i]
 
-    anova_result <- sensory_panel_anova(
-      data = data,
-      attribute = current_attribute,
-      product = product,
-      assessor = assessor,
-      session = session
+    anova_result <- tryCatch(
+      sensory_panel_anova(
+        data = data,
+        attribute = current_attribute,
+        product = product,
+        assessor = assessor,
+        session = session
+      ),
+      error = function(e) {
+        stop(
+          paste0(
+            "Analysis failed for attribute `",
+            current_attribute,
+            "`: ",
+            conditionMessage(e)
+          ),
+          call. = FALSE
+        )
+      }
     )
 
-    performance_result <-
+    performance_result <- tryCatch(
       sensory_panel_performance(
         data = data,
         attribute = current_attribute,
@@ -235,7 +248,19 @@ sensory_panel_multi <- function(
           agreement_threshold,
         repeatability_multiplier =
           repeatability_multiplier
-      )
+      ),
+      error = function(e) {
+        stop(
+          paste0(
+            "Analysis failed for attribute `",
+            current_attribute,
+            "`: ",
+            conditionMessage(e)
+          ),
+          call. = FALSE
+        )
+      }
+    )
 
     anova_results[[current_attribute]] <-
       anova_result

@@ -445,3 +445,21 @@ test_that("sensory_panel_multi propagates undefined agreement review", {
     "Review"
   )
 })
+
+test_that("sensory_panel_multi identifies attribute with no usable observations", {
+
+  test_data <- make_multi_panel_data()
+
+  test_data$bitterness[] <- NA_real_
+
+  expect_error(
+    sensory_panel_multi(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      )
+    ),
+    "Analysis failed for attribute `bitterness`"
+  )
+})
