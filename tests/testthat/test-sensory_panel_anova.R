@@ -546,3 +546,34 @@ test_that("sensory_panel_anova rejects missing and duplicated cells", {
     "complete Assessor x Product x Session design"
   )
 })
+
+test_that("sensory_panel_anova calculates assessor and session tests correctly", {
+
+  result <- sensory_panel_anova(
+    qda_example,
+    attribute = "sweetness"
+  )
+
+  raw_anova <- stats::anova(result$model)
+
+  for (term in c("assessor", "session")) {
+
+    result_row <- result$anova_table[
+      result$anova_table$term == term,
+      ,
+      drop = FALSE
+    ]
+
+    expect_equal(
+      result_row$f_value,
+      raw_anova[term, "F value"],
+      tolerance = 1e-12
+    )
+
+    expect_equal(
+      result_row$p_value,
+      raw_anova[term, "Pr(>F)"],
+      tolerance = 1e-12
+    )
+  }
+})
