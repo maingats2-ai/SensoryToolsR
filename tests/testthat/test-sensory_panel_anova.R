@@ -184,6 +184,32 @@ test_that("sensory_panel_anova returns interaction p-value", {
     result$interaction_p_value,
     1
   )
+
+  raw_anova <- stats::anova(result$model)
+
+  interaction_row <- result$anova_table[
+    result$anova_table$term == "product:assessor",
+    ,
+    drop = FALSE
+  ]
+
+  expect_equal(
+    interaction_row$f_value,
+    raw_anova["product:assessor", "F value"],
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    interaction_row$p_value,
+    raw_anova["product:assessor", "Pr(>F)"],
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    result$interaction_p_value,
+    raw_anova["product:assessor", "Pr(>F)"],
+    tolerance = 1e-12
+  )
 })
 
 
