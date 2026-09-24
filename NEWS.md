@@ -38,6 +38,9 @@
 * `sensory_panel_performance()` now retains assessors with no usable
   scores for an attribute, flags them for review, and reports unavailable
   diagnostics instead of silently dropping them from the panel summary.
+* `sensory_panel_multi()` now identifies the specific sensory attribute
+  that caused an analysis failure, making multi-attribute errors easier
+  to diagnose.
 
 # SensoryToolsR 0.1.0
 
