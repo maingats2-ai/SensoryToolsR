@@ -462,3 +462,27 @@ test_that("sensory_panel_anova rejects an incomplete panel design", {
     "complete Assessor x Product x Session design"
   )
 })
+
+test_that("sensory_panel_anova rejects duplicate design cells", {
+
+  test_data <- qda_example
+
+  duplicate_row <- test_data[
+    test_data$assessor == "A01" &
+      test_data$product == "P1" &
+      test_data$session == "S1",
+  ]
+
+  test_data <- dplyr::bind_rows(
+    test_data,
+    duplicate_row
+  )
+
+  expect_error(
+    sensory_panel_anova(
+      test_data,
+      attribute = "sweetness"
+    ),
+    "complete Assessor x Product x Session design"
+  )
+})
