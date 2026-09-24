@@ -742,3 +742,45 @@ test_that("sensory_pca variance table is internally consistent", {
     result$cumulative_variance
   )
 })
+
+test_that("sensory_pca scores and loadings match prcomp", {
+
+  result <- sensory_pca(
+    make_pca_data(),
+    attributes = pca_test_attributes
+  )
+
+  pcs <- colnames(result$pca_model$x)
+
+  reference_scores <- result$pca_model$x[
+    match(
+      result$scores$product,
+      rownames(result$pca_model$x)
+    ),
+    pcs,
+    drop = FALSE
+  ]
+
+  reference_loadings <- result$pca_model$rotation[
+    match(
+      result$loadings$attribute,
+      rownames(result$pca_model$rotation)
+    ),
+    pcs,
+    drop = FALSE
+  ]
+
+  expect_equal(
+    as.matrix(result$scores[pcs]),
+    unname(reference_scores),
+    ignore_attr = TRUE,
+    tolerance = 1e-12
+  )
+
+  expect_equal(
+    as.matrix(result$loadings[pcs]),
+    unname(reference_loadings),
+    ignore_attr = TRUE,
+    tolerance = 1e-12
+  )
+})
