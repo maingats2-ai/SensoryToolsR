@@ -1080,3 +1080,27 @@ test_that("PCA contributions and product cos2 match reference formulas", {
     )
   }
 })
+
+test_that("PCA diagnostics rejects infinite validation inputs", {
+
+  pca_result <- make_pca_diagnostic_result()
+
+  for (value in c(Inf, -Inf)) {
+
+    expect_error(
+      sensory_pca_diagnostics(
+        pca_result,
+        components = value
+      ),
+      "valid principal component numbers"
+    )
+
+    expect_error(
+      sensory_pca_diagnostics(
+        pca_result,
+        top_n = value
+      ),
+      "positive integer"
+    )
+  }
+})

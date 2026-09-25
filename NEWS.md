@@ -41,6 +41,8 @@
 * `sensory_panel_multi()` now identifies the specific sensory attribute
   that caused an analysis failure, making multi-attribute errors easier
   to diagnose.
+* `sensory_pca_diagnostics()` now rejects infinite `components` and
+  `top_n` values with clear validation errors.
 
 # SensoryToolsR 0.1.0
 

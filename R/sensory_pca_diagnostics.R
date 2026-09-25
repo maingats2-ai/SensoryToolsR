@@ -89,6 +89,7 @@ sensory_pca_diagnostics <- function(
     !is.numeric(components) ||
     length(components) < 1 ||
     any(is.na(components)) ||
+    any(!is.finite(components)) ||
     any(components %% 1 != 0) ||
     any(components < 1) ||
     any(components > available_components)
@@ -114,6 +115,7 @@ sensory_pca_diagnostics <- function(
     !is.numeric(top_n) ||
     length(top_n) != 1 ||
     is.na(top_n) ||
+    !is.finite(top_n) ||
     top_n %% 1 != 0 ||
     top_n < 1
   ) {
