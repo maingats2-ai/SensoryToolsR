@@ -1104,3 +1104,44 @@ test_that("PCA diagnostics rejects infinite validation inputs", {
     )
   }
 })
+
+test_that("PCA diagnostics handles products with zero scores", {
+
+  pca_result <- make_pca_diagnostic_result()
+
+  # Simulate a product located exactly at the PCA origin.
+  pc_names <- grep(
+    "^PC[0-9]+$",
+    names(pca_result$scores),
+    value = TRUE
+  )
+
+  for (pc in pc_names) {
+    pca_result$scores[[pc]][
+      pca_result$scores$product == "P1"
+    ] <- 0
+  }
+
+  result <- sensory_pca_diagnostics(
+    pca_result,
+    components = c(1, 2)
+  )
+
+  p1 <- result$product_diagnostics[
+    result$product_diagnostics$product == "P1",
+  ]
+
+  expect_equal(
+    p1$component,
+    c("PC1", "PC2")
+  )
+
+  expect_equal(
+    p1$contribution_percent,
+    c(0, 0)
+  )
+
+  expect_true(
+    all(is.na(p1$cos2))
+  )
+})
