@@ -43,6 +43,8 @@
   to diagnose.
 * `sensory_pca_diagnostics()` now rejects infinite `components` and
   `top_n` values with clear validation errors.
+* `sensory_pca()` now rejects infinite product mean profiles with
+  a clear validation error instead of reporting zero variance.
 
 # SensoryToolsR 0.1.0
 

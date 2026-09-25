@@ -784,3 +784,27 @@ test_that("sensory_pca scores and loadings match prcomp", {
     tolerance = 1e-12
   )
 })
+
+test_that("sensory_pca rejects non-finite product profiles", {
+
+  for (value in c(Inf, -Inf, NaN)) {
+
+    test_data <- make_pca_data()
+
+    test_data$sweetness[
+      test_data$product == "P1"
+    ] <- value
+
+    expect_error(
+      sensory_pca(
+        test_data,
+        attributes = c(
+          "sweetness",
+          "bitterness",
+          "firmness"
+        )
+      ),
+      "non-finite|missing values"
+    )
+  }
+})

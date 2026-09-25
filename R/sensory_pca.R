@@ -295,6 +295,15 @@ sensory_pca <- function(
     )
   }
 
+  # Reject infinite product mean profiles
+  if (any(!is.finite(as.matrix(profile_matrix)))) {
+
+    stop(
+      "PCA cannot be performed because product mean profiles contain non-finite values.",
+      call. = FALSE
+    )
+  }
+
   # --------------------------------------------------
   # Check zero-variance attributes
   # --------------------------------------------------
