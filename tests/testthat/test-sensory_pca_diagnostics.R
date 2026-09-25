@@ -1015,3 +1015,68 @@ test_that("attribute cos2 is correct for standardized PCA", {
     )
   )
 })
+
+test_that("PCA contributions and product cos2 match reference formulas", {
+
+  pca_result <- make_pca_diagnostic_result()
+
+  result <- sensory_pca_diagnostics(
+    pca_result,
+    components = c(1, 2)
+  )
+
+  rotation <- pca_result$pca_model$rotation
+  scores <- pca_result$pca_model$x
+
+  attribute_diag <- result$attribute_diagnostics
+  product_diag <- result$product_diagnostics
+
+  total_score_sq <- rowSums(scores^2)
+
+  for (pc in c("PC1", "PC2")) {
+
+    # Attribute contribution
+    expected_attribute <- rotation[, pc]^2 /
+      sum(rotation[, pc]^2) * 100
+
+    actual_attribute <- attribute_diag[
+      attribute_diag$component == pc,
+    ]
+
+    expect_equal(
+      actual_attribute$contribution_percent,
+      unname(expected_attribute[
+        actual_attribute$attribute
+      ]),
+      tolerance = 1e-10
+    )
+
+    # Product contribution
+    expected_product <- scores[, pc]^2 /
+      sum(scores[, pc]^2) * 100
+
+    actual_product <- product_diag[
+      product_diag$component == pc,
+    ]
+
+    expect_equal(
+      actual_product$contribution_percent,
+      unname(expected_product[
+        actual_product$product
+      ]),
+      tolerance = 1e-10
+    )
+
+    # Product cos2
+    expected_cos2 <- scores[, pc]^2 /
+      total_score_sq
+
+    expect_equal(
+      actual_product$cos2,
+      unname(expected_cos2[
+        actual_product$product
+      ]),
+      tolerance = 1e-10
+    )
+  }
+})
