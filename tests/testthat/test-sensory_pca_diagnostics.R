@@ -1145,3 +1145,33 @@ test_that("PCA diagnostics handles products with zero scores", {
     all(is.na(p1$cos2))
   )
 })
+
+test_that("PCA diagnostics handles a zero-score component", {
+
+  pca_result <- make_pca_diagnostic_result()
+
+  # Simulate a component with zero scores for every product.
+  pca_result$scores$PC2[] <- 0
+
+  result <- sensory_pca_diagnostics(
+    pca_result,
+    components = c(1, 2)
+  )
+
+  pc2 <- result$product_diagnostics[
+    result$product_diagnostics$component == "PC2",
+  ]
+
+  expect_equal(
+    nrow(pc2),
+    nrow(pca_result$scores)
+  )
+
+  expect_true(all(pc2$score == 0))
+
+  expect_true(
+    all(is.na(pc2$contribution_percent))
+  )
+
+  expect_true(all(pc2$cos2 == 0))
+})
