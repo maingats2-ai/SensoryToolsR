@@ -808,3 +808,25 @@ test_that("sensory_pca rejects non-finite product profiles", {
     )
   }
 })
+
+test_that("sensory_pca rejects empty or missing attribute names", {
+
+  test_data <- make_pca_data()
+
+  invalid_attributes <- list(
+    c("sweetness", NA_character_),
+    c("sweetness", ""),
+    c("sweetness", "   ")
+  )
+
+  for (attributes in invalid_attributes) {
+
+    expect_error(
+      sensory_pca(
+        test_data,
+        attributes = attributes
+      ),
+      "non-empty sensory attribute names"
+    )
+  }
+})

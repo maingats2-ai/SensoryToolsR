@@ -45,6 +45,8 @@
   `top_n` values with clear validation errors.
 * `sensory_pca()` now rejects infinite product mean profiles with
   a clear validation error instead of reporting zero variance.
+* `sensory_pca()` now rejects missing, empty, and whitespace-only
+  sensory attribute names with a clear validation error.
 
 # SensoryToolsR 0.1.0
 

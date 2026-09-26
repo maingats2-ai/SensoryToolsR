@@ -109,6 +109,16 @@ sensory_pca <- function(
     )
   }
 
+  if (
+    anyNA(attributes) ||
+    any(trimws(attributes) == "", na.rm = TRUE)
+  ) {
+    stop(
+      "`attributes` must contain non-empty sensory attribute names.",
+      call. = FALSE
+    )
+  }
+
   if (anyDuplicated(attributes)) {
     stop(
       "`attributes` must not contain duplicate names.",
