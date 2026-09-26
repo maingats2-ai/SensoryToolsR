@@ -150,6 +150,13 @@ sensory_pca <- function(
     )
   }
 
+  if (product %in% attributes) {
+    stop(
+      "`attributes` must not include the product column.",
+      call. = FALSE
+    )
+  }
+
   # --------------------------------------------------
   # Check sensory attributes
   # --------------------------------------------------

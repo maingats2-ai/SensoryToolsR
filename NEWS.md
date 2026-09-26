@@ -47,6 +47,8 @@
   a clear validation error instead of reporting zero variance.
 * `sensory_pca()` now rejects missing, empty, and whitespace-only
   sensory attribute names with a clear validation error.
+* `sensory_pca()` now rejects overlap between the product column and
+  sensory attributes with a clear validation error.
 
 # SensoryToolsR 0.1.0
 

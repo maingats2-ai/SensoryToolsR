@@ -830,3 +830,22 @@ test_that("sensory_pca rejects empty or missing attribute names", {
     )
   }
 })
+
+test_that("sensory_pca rejects overlap between product and attributes", {
+
+  test_data <- make_pca_data()
+
+  # Use numeric product IDs to avoid triggering
+  # the existing non-numeric attribute validation.
+  test_data$product <- as.integer(
+    sub("P", "", test_data$product)
+  )
+
+  expect_error(
+    sensory_pca(
+      test_data,
+      attributes = c("product", "sweetness")
+    ),
+    "must not include the product column"
+  )
+})
