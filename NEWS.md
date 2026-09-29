@@ -55,6 +55,8 @@
   before analysis, avoiding downstream `dplyr` errors.
 * `sensory_pca()` now rejects input data with missing, empty, or
   whitespace-only column names before analysis.
+* `sensory_pca()` now rejects empty data frames with a clear validation
+  error before product counting.
 
 # SensoryToolsR 0.1.0
 

@@ -915,3 +915,19 @@ test_that("sensory_pca rejects missing or blank input column names", {
     )
   }
 })
+
+test_that("sensory_pca rejects empty data frames", {
+
+  test_data <- make_pca_data()[0, ]
+
+  expect_error(
+    sensory_pca(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      )
+    ),
+    "empty data"
+  )
+})

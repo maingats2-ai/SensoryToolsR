@@ -94,6 +94,13 @@ sensory_pca <- function(
     )
   }
 
+  if (nrow(data) == 0) {
+    stop(
+      "`data` must not be an empty data frame.",
+      call. = FALSE
+    )
+  }
+
   if (
     anyNA(names(data)) ||
     any(trimws(names(data)) == "", na.rm = TRUE)
