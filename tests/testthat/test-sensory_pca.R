@@ -849,3 +849,20 @@ test_that("sensory_pca rejects overlap between product and attributes", {
     "must not include the product column"
   )
 })
+
+test_that("sensory_pca rejects whitespace-only product names", {
+
+  test_data <- make_pca_data()
+
+  expect_error(
+    sensory_pca(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      ),
+      product = "   "
+    ),
+    "`product` must be a single column name"
+  )
+})

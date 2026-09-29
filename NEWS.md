@@ -49,6 +49,8 @@
   sensory attribute names with a clear validation error.
 * `sensory_pca()` now rejects overlap between the product column and
   sensory attributes with a clear validation error.
+* `sensory_pca()` now rejects whitespace-only `product` column names
+  with a clear validation error.
 
 # SensoryToolsR 0.1.0
 

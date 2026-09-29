@@ -134,7 +134,7 @@ sensory_pca <- function(
     !is.character(product) ||
     length(product) != 1 ||
     is.na(product) ||
-    product == ""
+    trimws(product) == ""
   ) {
     stop(
       "`product` must be a single column name.",
