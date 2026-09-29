@@ -886,3 +886,32 @@ test_that("sensory_pca rejects duplicate input column names", {
     "duplicate column names"
   )
 })
+
+test_that("sensory_pca rejects missing or blank input column names", {
+
+  invalid_names <- list(
+    "",
+    "   ",
+    NA_character_
+  )
+
+  for (bad_name in invalid_names) {
+
+    test_data <- make_pca_data()
+
+    names(test_data)[
+      names(test_data) == "bitterness"
+    ] <- bad_name
+
+    expect_error(
+      sensory_pca(
+        test_data,
+        attributes = c(
+          "sweetness",
+          "firmness"
+        )
+      ),
+      "missing, empty, or whitespace-only column names"
+    )
+  }
+})

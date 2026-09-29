@@ -53,6 +53,8 @@
   with a clear validation error.
 * `sensory_pca()` now rejects input data with duplicate column names
   before analysis, avoiding downstream `dplyr` errors.
+* `sensory_pca()` now rejects input data with missing, empty, or
+  whitespace-only column names before analysis.
 
 # SensoryToolsR 0.1.0
 

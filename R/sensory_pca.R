@@ -94,6 +94,16 @@ sensory_pca <- function(
     )
   }
 
+  if (
+    anyNA(names(data)) ||
+    any(trimws(names(data)) == "", na.rm = TRUE)
+  ) {
+    stop(
+      "`data` must not contain missing, empty, or whitespace-only column names.",
+      call. = FALSE
+    )
+  }
+
   if (anyDuplicated(names(data))) {
     stop(
       "`data` must not contain duplicate column names.",
