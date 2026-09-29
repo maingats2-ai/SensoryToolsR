@@ -174,6 +174,13 @@ sensory_pca <- function(
     )
   }
 
+  if (all(is.na(data[[product]]))) {
+    stop(
+      "`product` column must contain at least one non-missing value.",
+      call. = FALSE
+    )
+  }
+
   if (product %in% attributes) {
     stop(
       "`attributes` must not include the product column.",

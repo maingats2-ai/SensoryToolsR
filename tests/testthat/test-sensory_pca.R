@@ -931,3 +931,20 @@ test_that("sensory_pca rejects empty data frames", {
     "empty data"
   )
 })
+
+test_that("sensory_pca rejects product columns with all missing values", {
+
+  test_data <- make_pca_data()
+  test_data$product <- NA_character_
+
+  expect_error(
+    sensory_pca(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "bitterness"
+      )
+    ),
+    "at least one non-missing value"
+  )
+})
