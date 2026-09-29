@@ -51,6 +51,8 @@
   sensory attributes with a clear validation error.
 * `sensory_pca()` now rejects whitespace-only `product` column names
   with a clear validation error.
+* `sensory_pca()` now rejects input data with duplicate column names
+  before analysis, avoiding downstream `dplyr` errors.
 
 # SensoryToolsR 0.1.0
 

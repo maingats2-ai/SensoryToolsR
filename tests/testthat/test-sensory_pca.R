@@ -866,3 +866,23 @@ test_that("sensory_pca rejects whitespace-only product names", {
     "`product` must be a single column name"
   )
 })
+
+test_that("sensory_pca rejects duplicate input column names", {
+
+  test_data <- make_pca_data()
+
+  names(test_data)[
+    names(test_data) == "bitterness"
+  ] <- "sweetness"
+
+  expect_error(
+    sensory_pca(
+      test_data,
+      attributes = c(
+        "sweetness",
+        "firmness"
+      )
+    ),
+    "duplicate column names"
+  )
+})

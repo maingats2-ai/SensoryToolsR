@@ -94,6 +94,13 @@ sensory_pca <- function(
     )
   }
 
+  if (anyDuplicated(names(data))) {
+    stop(
+      "`data` must not contain duplicate column names.",
+      call. = FALSE
+    )
+  }
+
   # --------------------------------------------------
   # Validate attributes
   # --------------------------------------------------
